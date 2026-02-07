@@ -1,44 +1,9 @@
-from database import db, app, User, Report, Upvote, ReportType, Comment
+import database as db
 
-ctx = app.app_context()
-ctx.push()
-db.drop_all()
-db.create_all()
-
-petteri = User(
-    name = "Petteri Kuivanen",
-)
-
-ananas = User(
-    name = "Ananas Loimu",
-)
-
-hole = ReportType(
-    name = "Reikä",
-)
-
-pothole = Report(
-    user = petteri,
-    description = "Hullu reikä",
-    location = "Keskusta",
-    report_type = hole,
-)
-
-updoot = Upvote(
-    user = ananas,
-    report = pothole,
-)
-
-komment = Comment(
-    user = ananas,
-    report = pothole,
-    text = "kamalaa miten ihmeessä me voidaan nyt mennä kauppaan ):",
-)
-
-db.session.add_all([petteri, ananas, hole, pothole, updoot])
-db.session.commit()
-
-db.session.delete(hole)
-db.session.commit()
-
-ctx.pop()
+db.init_db(True)
+db.add_user("Petteri Kuivanen")
+db.add_user("Ananas Loimu")
+db.add_report_type("Reikä")
+db.add_report(1, "Hullu reikä", "Keskusta", 1)
+db.add_upvote(2, 1)
+db.add_comment(1, 1, "crazy hamburger!")

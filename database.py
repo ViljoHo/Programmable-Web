@@ -126,7 +126,3 @@ def delete_entry(table, id: int):
         if entry:
             db.session.delete(entry)
             db.session.commit()
-
-init_db(True)
-add_user("buh")
-delete_entry(User, 2)
