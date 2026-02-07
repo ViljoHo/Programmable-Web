@@ -1,4 +1,4 @@
-from database import db, app, User
+from database import db, app, User, Report, Upvote, ReportType, Comment
 
 ctx = app.app_context()
 ctx.push()
@@ -13,8 +13,32 @@ ananas = User(
     name = "Ananas Loimu",
 )
 
-db.session.add(petteri)
-db.session.add(ananas)
+hole = ReportType(
+    name = "Reikä",
+)
+
+pothole = Report(
+    user = petteri,
+    description = "Hullu reikä",
+    location = "Keskusta",
+    report_type = hole,
+)
+
+updoot = Upvote(
+    user = ananas,
+    report = pothole,
+)
+
+komment = Comment(
+    user = ananas,
+    report = pothole,
+    text = "kamalaa miten ihmeessä me voidaan nyt mennä kauppaan ):",
+)
+
+db.session.add_all([petteri, ananas, hole, pothole, updoot])
+db.session.commit()
+
+db.session.delete(hole)
 db.session.commit()
 
 ctx.pop()
