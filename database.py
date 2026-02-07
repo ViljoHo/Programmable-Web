@@ -7,7 +7,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 class Report(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     description = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(64), nullable=False)
@@ -19,14 +19,14 @@ class Report(db.Model):
     comments = db.relationship("Comment", back_populates="report")
 
 class ReportType(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(128))
 
     reports = db.relationship("Report", back_populates="report_type")
 
 class Upvote(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     report_id = db.Column(db.Integer, db.ForeignKey("report.id"), nullable=False)
 
@@ -34,7 +34,7 @@ class Upvote(db.Model):
     report = db.relationship("Report", back_populates="upvotes")
 
 class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     report_id = db.Column(db.Integer, db.ForeignKey("report.id"), nullable=False)
     text = db.Column(db.String(128), nullable=False)
@@ -43,8 +43,8 @@ class Comment(db.Model):
     report = db.relationship("Report", back_populates="comments")
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(16), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(32), unique=True, nullable=False)
 
     comments = db.relationship("Comment", back_populates="user")
     upvotes = db.relationship("Upvote", back_populates="user")
