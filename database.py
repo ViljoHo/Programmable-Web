@@ -1,4 +1,6 @@
 import json
+import hashlib
+import secrets
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -81,11 +83,32 @@ class User(db.Model):
     comments = db.relationship("Comment", back_populates="user")
     upvotes = db.relationship("Upvote", back_populates="user", cascade="all, delete-orphan")
     reports = db.relationship("Report", back_populates="user")
+    api_key = db.relationship("ApiKey", back_populates="user")
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
+        }
+    
+class ApiKey(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(32), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    admin = db.Column(db.Boolean, default=False)
+
+    user = db.relationship("User", back_populates="api_key")
+
+    @staticmethod
+    def key_hash(key):
+        return hashlib.sha256(key.encode()).digest()
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "key": self.key,
+            "user_id": self.user_id,
+            "admin": self.admin,
         }
 
 def init_db(clear=False):
@@ -190,3 +213,19 @@ def get_comments(report_id: int):
     with app.app_context():
         entry_list = [entry.to_dict() for entry in Comment.query.filter_by(report_id=report_id).all()]
         return json.dumps(entry_list)
+
+def create_key(admin: bool, user_id: int):
+    with app.app_context():
+        user = User.query.filter_by(id=user_id).first()
+    token = secrets.token_urlsafe()
+
+    new_key = ApiKey(
+        key = ApiKey.key_hash(token),
+        user = user,
+        admin = admin,
+    )
+
+    with app.app_context():
+        db.session.add(new_key)
+        db.session.commit()
+        return new_key.id
