@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.String(20), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
     type = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
     description = db.Column(db.String(128), nullable=False)
@@ -34,7 +34,7 @@ class Report(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "timestamp": self.timestamp,
+            "timestamp": str(self.timestamp),
             "user_id": self.user_id,
             "type": self.type,
             "description": self.description,
@@ -72,7 +72,7 @@ class Upvote(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.String(20), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
     text = db.Column(db.String(128), nullable=False)
@@ -83,7 +83,7 @@ class Comment(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "timestamp": self.timestamp,
+            "timestamp": str(self.timestamp),
             "report_id": self.report_id,
             "user_id": self.user_id,
             "text": self.text,
@@ -136,7 +136,6 @@ def add_report(user_id: int, type_id: int, description: str, location: str):
         report_type = ReportType.query.filter_by(id=type_id).first()
 
     new_report = Report(
-            timestamp = _get_timestamp(),
             user = user,
             report_type = report_type,
             description = description,
@@ -180,7 +179,6 @@ def add_comment(report_id: int, user_id: int, text: str):
         user = User.query.filter_by(id=user_id).first()
 
     new_comment = Comment(
-            timestamp = _get_timestamp(),
             report = report,
             user = user,
             text = text,
@@ -228,9 +226,6 @@ def get_comments(report_id: int):
     with app.app_context():
         entry_list = [entry.to_dict() for entry in Comment.query.filter_by(report_id=report_id).all()]
         return json.dumps(entry_list)
-
-def _get_timestamp():
-    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 def create_key(admin: bool, user_id: int):
     with app.app_context():
