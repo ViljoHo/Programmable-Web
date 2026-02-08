@@ -7,7 +7,7 @@
 * Student 4. Name and email
 
 ## Database
-Python dependencies listed in `requirements.txt`. Install with `pip install -r requirements.txt`
+All files related to the database are in the `database` directory. Python dependencies listed in `requirements.txt`. Install with `pip install -r requirements.txt`
 
 The database is an SQLite database version 3.43.1.
 
