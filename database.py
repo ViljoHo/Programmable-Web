@@ -1,6 +1,15 @@
 import json
+from datetime import datetime, timezone
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 app = Flask("database")
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
@@ -9,15 +18,16 @@ db = SQLAlchemy(app)
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
     description = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(64), nullable=False)
-    type = db.Column(db.Integer, db.ForeignKey("report_type.id"))
+    type = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
+    timestamp = db.Column(db.String(20), nullable=False)
 
-    user = db.relationship("User", back_populates="reports")
-    report_type = db.relationship("ReportType", back_populates="reports")
-    upvotes = db.relationship("Upvote", back_populates="report", cascade="all, delete-orphan")
-    comments = db.relationship("Comment", back_populates="report", cascade="all, delete-orphan")
+    user = db.relationship("User", back_populates="reports", passive_deletes=True)
+    report_type = db.relationship("ReportType", back_populates="reports", passive_deletes=True)
+    upvotes = db.relationship("Upvote", back_populates="report", passive_deletes=True)
+    comments = db.relationship("Comment", back_populates="report", passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -26,6 +36,7 @@ class Report(db.Model):
             "description": self.description,
             "location": self.location,
             "type": self.type,
+            "timestamp": self.timestamp,
         }
 
 class ReportType(db.Model):
@@ -33,7 +44,7 @@ class ReportType(db.Model):
     name = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(128))
 
-    reports = db.relationship("Report", back_populates="report_type")
+    reports = db.relationship("Report", back_populates="report_type", passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -44,11 +55,11 @@ class ReportType(db.Model):
 
 class Upvote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    report_id = db.Column(db.Integer, db.ForeignKey("report.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
+    report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
 
-    user = db.relationship("User", back_populates="upvotes")
-    report = db.relationship("Report", back_populates="upvotes")
+    user = db.relationship("User", back_populates="upvotes", passive_deletes=True)
+    report = db.relationship("Report", back_populates="upvotes", passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -59,12 +70,13 @@ class Upvote(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    report_id = db.Column(db.Integer, db.ForeignKey("report.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
+    report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
     text = db.Column(db.String(128), nullable=False)
+    timestamp = db.Column(db.String(20), nullable=False)
 
-    user = db.relationship("User", back_populates="comments")
-    report = db.relationship("Report", back_populates="comments")
+    user = db.relationship("User", back_populates="comments", passive_deletes=True)
+    report = db.relationship("Report", back_populates="comments", passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -72,15 +84,16 @@ class Comment(db.Model):
             "user_id": self.user_id,
             "report_id": self.report_id,
             "text": self.text,
+            "timestamp": self.timestamp,
         }
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
 
-    comments = db.relationship("Comment", back_populates="user")
-    upvotes = db.relationship("Upvote", back_populates="user", cascade="all, delete-orphan")
-    reports = db.relationship("Report", back_populates="user")
+    comments = db.relationship("Comment", back_populates="user", passive_deletes=True)
+    upvotes = db.relationship("Upvote", back_populates="user", passive_deletes=True)
+    reports = db.relationship("Report", back_populates="user", passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -104,6 +117,7 @@ def add_report(user_id: int, description: str, location: str, type_id: int):
             description = description,
             location = location,
             report_type = report_type,
+            timestamp = _get_timestamp(),
         )
 
     with app.app_context():
@@ -146,6 +160,7 @@ def add_comment(user_id: int, report_id: int, text: str):
             user = user,
             report = report,
             text = text,
+            timestamp = _get_timestamp(),
         )
 
     with app.app_context():
@@ -190,3 +205,6 @@ def get_comments(report_id: int):
     with app.app_context():
         entry_list = [entry.to_dict() for entry in Comment.query.filter_by(report_id=report_id).all()]
         return json.dumps(entry_list)
+
+def _get_timestamp():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
