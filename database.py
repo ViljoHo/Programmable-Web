@@ -20,11 +20,11 @@ db = SQLAlchemy(app)
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.String(20), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
+    type = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
     description = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(64), nullable=False)
-    type = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
-    timestamp = db.Column(db.String(20), nullable=False)
 
     user = db.relationship("User", back_populates="reports", passive_deletes=True)
     report_type = db.relationship("ReportType", back_populates="reports", passive_deletes=True)
@@ -34,11 +34,11 @@ class Report(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "timestamp": self.timestamp,
             "user_id": self.user_id,
+            "type": self.type,
             "description": self.description,
             "location": self.location,
-            "type": self.type,
-            "timestamp": self.timestamp,
         }
 
 class ReportType(db.Model):
@@ -57,25 +57,25 @@ class ReportType(db.Model):
 
 class Upvote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
     report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
 
-    user = db.relationship("User", back_populates="upvotes", passive_deletes=True)
     report = db.relationship("Report", back_populates="upvotes", passive_deletes=True)
+    user = db.relationship("User", back_populates="upvotes", passive_deletes=True)
 
     def to_dict(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
             "report_id": self.report_id,
+            "user_id": self.user_id,
         }
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
-    report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
-    text = db.Column(db.String(128), nullable=False)
     timestamp = db.Column(db.String(20), nullable=False)
+    report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
+    text = db.Column(db.String(128), nullable=False)
 
     user = db.relationship("User", back_populates="comments", passive_deletes=True)
     report = db.relationship("Report", back_populates="comments", passive_deletes=True)
@@ -83,19 +83,19 @@ class Comment(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
-            "report_id": self.report_id,
-            "text": self.text,
             "timestamp": self.timestamp,
+            "report_id": self.report_id,
+            "user_id": self.user_id,
+            "text": self.text,
         }
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
 
-    comments = db.relationship("Comment", back_populates="user", passive_deletes=True)
-    upvotes = db.relationship("Upvote", back_populates="user", passive_deletes=True)
     reports = db.relationship("Report", back_populates="user", passive_deletes=True)
+    upvotes = db.relationship("Upvote", back_populates="user", passive_deletes=True)
+    comments = db.relationship("Comment", back_populates="user", passive_deletes=True)
     api_key = db.relationship("ApiKey", back_populates="user", passive_deletes=True)
 
     def to_dict(self):
@@ -106,8 +106,8 @@ class User(db.Model):
     
 class ApiKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String(32), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    key = db.Column(db.String(32), unique=True, nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", back_populates="api_key")
@@ -119,28 +119,28 @@ class ApiKey(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "key": self.key,
             "user_id": self.user_id,
+            "key": self.key,
             "admin": self.admin,
         }
 
-def init_db(clear=False):
+def init_db(clear: bool=False):
     with app.app_context():
         if clear:
             db.drop_all()
         db.create_all()
 
-def add_report(user_id: int, description: str, location: str, type_id: int):
+def add_report(user_id: int, type_id: int, description: str, location: str):
     with app.app_context():
         user = User.query.filter_by(id=user_id).first()
         report_type = ReportType.query.filter_by(id=type_id).first()
 
     new_report = Report(
+            timestamp = _get_timestamp(),
             user = user,
+            report_type = report_type,
             description = description,
             location = location,
-            report_type = report_type,
-            timestamp = _get_timestamp(),
         )
 
     with app.app_context():
@@ -159,14 +159,14 @@ def add_report_type(name: str, description: str=None):
         db.session.commit()
         return new_report_type.id
 
-def add_upvote(user_id: int, report_id: int):
+def add_upvote(report_id: int, user_id: int):
     with app.app_context():
-        user = User.query.filter_by(id=user_id).first()
         report = Report.query.filter_by(id=report_id).first()
+        user = User.query.filter_by(id=user_id).first()
 
     new_upvote = Upvote(
-            user = user,
             report = report,
+            user = user,
         )
 
     with app.app_context():
@@ -174,16 +174,16 @@ def add_upvote(user_id: int, report_id: int):
         db.session.commit()
         return new_upvote.id
 
-def add_comment(user_id: int, report_id: int, text: str):
+def add_comment(report_id: int, user_id: int, text: str):
     with app.app_context():
-        user = User.query.filter_by(id=user_id).first()
         report = Report.query.filter_by(id=report_id).first()
+        user = User.query.filter_by(id=user_id).first()
 
     new_comment = Comment(
-            user = user,
-            report = report,
-            text = text,
             timestamp = _get_timestamp(),
+            report = report,
+            user = user,
+            text = text,
         )
 
     with app.app_context():
