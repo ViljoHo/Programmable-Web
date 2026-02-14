@@ -1,7 +1,7 @@
 from flask import Response, request
 from flask_restful import Resource
-from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
 from issue_api import db
 from issue_api.models import ReportType

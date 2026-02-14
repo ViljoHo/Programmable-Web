@@ -1,5 +1,6 @@
-import hashlib
 from datetime import datetime, timezone
+import hashlib
+
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
