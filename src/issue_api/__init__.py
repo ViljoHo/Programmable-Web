@@ -28,10 +28,11 @@ def create_app(test_config=None):
     db.init_app(app)
 
     from . import api
+    from . import models
+    app.cli.add_command(models.reset_db)
     app.register_blueprint(api.api_bp)
 
     with app.app_context():
-        # db.drop_all() # uncomment if you want to clear the database
         db.create_all()
 
     return app
