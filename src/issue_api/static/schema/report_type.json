@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "required": ["name"],
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Report type's unique name"
+        },
+        "description": {
+            "type": "string",
+            "description": "Optional description of the report type"
+        }
+    }
+}
