@@ -18,8 +18,8 @@ class ReportTypeCollection(Resource):
 
         try:
             validate(request.json, REPORT_TYPE_SCHEMA)
-        except ValidationError as e:
-            raise BadRequest(description=str(e))
+        except ValidationError as err:
+            raise BadRequest(description=str(err))
 
         report_type = ReportType()
         report_type.deserialize(json_dict=request.json)
