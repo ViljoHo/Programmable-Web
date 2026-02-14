@@ -12,6 +12,13 @@ REPORT_TYPE_SCHEMA = load_json_schema("report_type.json")
 
 class ReportTypeCollection(Resource):
 
+    def get(self):
+        response_data = []
+        report_types = ReportType.query.all()
+        for report_type in report_types:
+            response_data.append(report_type.serialize())
+        return response_data
+
     def post(self):
         if not request.json:
             raise UnsupportedMediaType
@@ -34,3 +41,31 @@ class ReportTypeCollection(Resource):
             )
 
         return Response(status=201)
+
+class ReportTypeItem(Resource):
+    def put(self, report_type: ReportType):
+        if not request.json:
+            raise UnsupportedMediaType
+
+        try:
+            validate(request.json, REPORT_TYPE_SCHEMA)
+        except ValidationError as err:
+            raise BadRequest(description=str(err))
+
+        report_type.deserialize(request.json)
+        try:
+            db.session.add(report_type)
+            db.session.commit()
+        except IntegrityError:
+            raise Conflict(
+                description="ReportType with name '{name}' already exists.".format(
+                    **request.json
+                )
+            )
+
+        return Response(status=204)
+
+    def delete(self, report_type: ReportType):
+        db.session.delete(report_type)
+        db.session.commit()
+        return Response(status=204)

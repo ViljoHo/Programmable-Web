@@ -29,7 +29,12 @@ def create_app(test_config=None):
 
     from . import api
     from . import models
+    from .utils import ReportTypeConverter
+
     app.cli.add_command(models.reset_db)
+
+    app.url_map.converters["report_type"] = ReportTypeConverter
+
     app.register_blueprint(api.api_bp)
 
     with app.app_context():
