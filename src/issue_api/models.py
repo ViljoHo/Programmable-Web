@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 import hashlib
 
+import click
+from flask.cli import with_appcontext
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
@@ -109,3 +111,11 @@ class ApiKey(db.Model):
             "key": self.key,
             "admin": self.admin,
         }
+
+@click.command("reset-db")
+@with_appcontext
+def reset_db():
+    print("Resetting database...")
+    db.drop_all()
+    db.create_all()
+    print("Database reset complete.")
