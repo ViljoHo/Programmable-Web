@@ -22,4 +22,4 @@ class ReportTypeConverter(BaseConverter):
         return db_report_type
 
     def to_url(self, db_report_type):
-        return db_report_type.name
+        return db_report_type.id
