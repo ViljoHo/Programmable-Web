@@ -1,5 +1,5 @@
-from flask_restful import Api
 from flask import Blueprint
+from flask_restful import Api
 
 from .resources.report_type import ReportTypeCollection
 
