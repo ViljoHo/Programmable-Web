@@ -173,20 +173,20 @@ def add_report_type(name: str, description: str=None):
         db.session.commit()
         return new_report_type.id
 
-def add_upvote(report_id: int, user_id: int):
-    with app.app_context():
-        report = Report.query.filter_by(id=report_id).first()
-        user = User.query.filter_by(id=user_id).first()
+# def add_upvote(report_id: int, user_id: int):
+#     with app.app_context():
+#         report = Report.query.filter_by(id=report_id).first()
+#         user = User.query.filter_by(id=user_id).first()
 
-    new_upvote = Upvote(
-            report = report,
-            user = user,
-        )
+#     new_upvote = Upvote(
+#             report = report,
+#             user = user,
+#         )
 
-    with app.app_context():
-        db.session.add(new_upvote)
-        db.session.commit()
-        return new_upvote.id
+#     with app.app_context():
+#         db.session.add(new_upvote)
+#         db.session.commit()
+#         return new_upvote.id
 
 def add_comment(report_id: int, user_id: int, text: str):
     with app.app_context():
@@ -232,10 +232,10 @@ def get_all(table):
         entry_list = [entry.to_dict() for entry in table.query.all()]
         return json.dumps(entry_list)
 
-def get_upvotes_count(report_id: int):
-    with app.app_context():
-        count = Upvote.query.filter_by(report_id=report_id).count()
-        return count
+# def get_upvotes_count(report_id: int):
+#     with app.app_context():
+#         count = Upvote.query.filter_by(report_id=report_id).count()
+#         return count
 
 def get_comments(report_id: int):
     with app.app_context():
