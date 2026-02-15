@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "required": ["user_id", "description", "location"],
+    "properties": {
+        "type": {
+            "type": "number",
+            "description": "Numerical ID of the report type"
+        },
+        "user_id": {
+            "type": "number",
+            "description": "Numerical user ID of the report author"
+        },
+        "description": {
+            "type": "string",
+            "description": "Short description of the reported issue"
+        },
+        "location": {
+            "type": "string",
+            "description": "Geographical location of the reported issue"
+        }
+    }
+}

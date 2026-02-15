@@ -31,15 +31,22 @@ class Report(db.Model):
     report_type = db.relationship("ReportType", back_populates="reports", passive_deletes=True)
     comments = db.relationship("Comment", back_populates="report", passive_deletes=True)
 
-    def serialize(self):
-        return {
+    def deserialize(self, json_dict):
+        self.description = json_dict["description"]
+        self.location = json_dict["location"]
+
+    def serialize(self, short_form=False):
+        doc = {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "user_id": self.user_id,
             "type": self.type,
+            "user": self.user.serialize(),
             "description": self.description,
             "location": self.location,
         }
+        if not short_form:
+            doc["comments"] = [comment.serialize() for comment in self.comments]
+        return doc
 
 class ReportType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,8 +80,7 @@ class Comment(db.Model):
         return {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "report_id": self.report_id,
-            "user_id": self.user_id,
+            "user": self.user.serialize(),
             "text": self.text,
         }
 
