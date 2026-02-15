@@ -22,7 +22,11 @@ class CommentCollection(Resource):
             raise BadRequest(description=str(err))
 
         comment = Comment()
-        comment.deserialize(json_dict=request.json)
+
+        try:
+            comment.deserialize(json_dict=request.json)
+        except ValueError as err:
+            return Response(str(err), status=404)
 
         db.session.add(comment)
         db.session.commit()
