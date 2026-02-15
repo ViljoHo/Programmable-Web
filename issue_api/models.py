@@ -41,8 +41,8 @@ class Report(db.Model):
         doc = {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "user": self.user.serialize(),
-            "report_type": self.report_type.serialize(),
+            "user_name": self.user.name,
+            "report_type": self.report_type.serialize(True),
             "description": self.description,
             "location": self.location,
         }
@@ -61,12 +61,14 @@ class ReportType(db.Model):
         self.name = json_dict["name"]
         self.description = json_dict.get("description")
 
-    def serialize(self):
-        return {
-            "id": self.id,
+    def serialize(self, short_form=False):
+        doc = {
             "name": self.name,
             "description": self.description,
         }
+        if not short_form:
+            doc["id"] = self.id
+        return doc
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
