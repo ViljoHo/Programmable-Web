@@ -16,7 +16,7 @@ def load_json_schema(file_name: str):
 class ReportTypeConverter(BaseConverter):
 
     def to_python(self, report_type_id):
-        db_report_type = ReportType.query.get(report_type_id)
+        db_report_type = ReportType.query.filter_by(id=report_type_id).first()
         if db_report_type is None:
             raise NotFound(description=f"ReportType with id '{report_type_id}' not found")
         return db_report_type
@@ -27,7 +27,7 @@ class ReportTypeConverter(BaseConverter):
 class ReportConverter(BaseConverter):
 
     def to_python(self, report_id):
-        db_report = Report.query.get(report_id)
+        db_report = Report.query.filter_by(id=report_id).first()
         if db_report is None:
             raise NotFound(description=f"Report with id '{report_id}' not found")
         return db_report
@@ -38,7 +38,7 @@ class ReportConverter(BaseConverter):
 class CommentConverter(BaseConverter):
 
     def to_python(self, comment_id):
-        db_comment = Comment.query.get(comment_id)
+        db_comment = Comment.query.filter_by(id=comment_id).first()
         if db_comment is None:
             raise NotFound(description=f"Comment with id '{comment_id}' not found")
         return db_comment

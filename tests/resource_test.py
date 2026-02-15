@@ -8,6 +8,8 @@ import pytest
 from issue_api import create_app, db
 from issue_api.models import ReportType, User, Report
 
+REPORT_TYPE_AMOUNT = 3
+
 @pytest.fixture
 def client():
     db_fd, db_file_name = tempfile.mkstemp()
@@ -37,7 +39,7 @@ def client():
     ctx.pop()
 
 def _populate_db():
-    for i in range(1, 4):
+    for i in range(1, REPORT_TYPE_AMOUNT + 1):
         report_type = ReportType(
             name=f"test-report_type-{i}",
         )
@@ -81,7 +83,7 @@ def _get_comment_json(number=1, user_id=1, report_id=1):
     }
 
 
-class TestResourceTypeCollection:
+class TestReportTypeCollection:
 
     RESOURCE_URL = "/api/report-types/"
 
@@ -89,16 +91,20 @@ class TestResourceTypeCollection:
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 3
+        assert len(body) == REPORT_TYPE_AMOUNT
         for item in body:
             assert "name" in item
-    
+
     def test_post_valid_request(self, client):
         valid = _get_report_type_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
+        new_report_id = str(REPORT_TYPE_AMOUNT + 1)
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + new_report_id + "/")
+        resp = client.put(resp.headers["Location"], json=valid)
+        assert resp.status_code == 204
     
-    def test_wrong_mediatype(self, client):
+    def test_post_wrong_mediatype(self, client):
         valid = _get_report_type_json()
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
         assert resp.status_code == 415
@@ -115,6 +121,33 @@ class TestResourceTypeCollection:
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
 
+
+class TestReportTypeItem:
+
+    RESOURCE_URL = "api/report-types/1/"
+    INVALID_URL = "/api/test/report-types/99999/"
+
+    def test_put_valid_request(self, client):
+        valid = _get_report_type_json()
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+
+    def test_put_wrong_mediatype(self, client):
+        valid = _get_report_type_json()
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+    def test_put_missing_field(self, client):
+        valid = _get_report_type_json()
+        valid.pop("name")
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
+    def test_put_name_conflict(self, client):
+        valid = _get_report_type_json()
+        valid["name"] = "test-report_type-2"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
 
 class TestReportCollection:
 
@@ -138,11 +171,13 @@ class TestCommentCollection:
 
     RESOURCE_URL = "/api/comments/"
 
+    # POST a valid comment
     def test_post_valid_request(self, client):
         valid = _get_comment_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
     
+    # POST with an invalid user id
     def test_post_invalid_user_id_request(self, client):
         valid = _get_comment_json(user_id=56)
         resp = client.post(self.RESOURCE_URL, json=valid)
