@@ -1,4 +1,4 @@
-from flask import Response, request
+from flask import Response, request, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
@@ -40,7 +40,9 @@ class ReportTypeCollection(Resource):
                 )
             )
 
-        return Response(status=201)
+        return Response(status=201, headers={
+            "Location": url_for("api.reporttypeitem", report_type=report_type)
+        })
 
 class ReportTypeItem(Resource):
     def put(self, report_type: ReportType):
