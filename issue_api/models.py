@@ -89,6 +89,9 @@ class Comment(db.Model):
         user_id = json_dict["user_id"]
         user = User.query.filter_by(id=user_id).first()
 
+        if None in [report, user]:
+            raise ValueError("User or report not found")
+
         self.report = report
         self.user = user
 
