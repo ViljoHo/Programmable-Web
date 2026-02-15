@@ -34,6 +34,11 @@ class Report(db.Model):
     def deserialize(self, json_dict):
         self.description = json_dict["description"]
         self.location = json_dict["location"]
+        
+        user_id = json_dict["user_id"]
+        self.user = User.query.filter_by(id=user_id).first()
+        type = json_dict["type"]
+        self.report_type = ReportType.query.filter_by(id=type).first()
 
     def serialize(self, short_form=False):
         doc = {
