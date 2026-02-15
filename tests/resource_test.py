@@ -65,12 +65,21 @@ def _get_report_type_json(number=1):
         "description": "some description",
     }
 
+def _get_report_json(number=1, report_type_id=1, user_id=1):
+    return {
+        "type": report_type_id,
+        "user_id": user_id,
+        "description": f"new-report-{number}",
+        "location": f"test location",
+    }
+
 def _get_comment_json(number=1, user_id=1, report_id=1):
     return {
         "text": f"new-comment-{number}",
         "user_id": user_id,
         "report_id": report_id,
     }
+
 
 class TestResourceTypeCollection:
 
@@ -105,6 +114,25 @@ class TestResourceTypeCollection:
         valid["name"] = "test-report_type-1"
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
+
+
+class TestReportCollection:
+
+    RESOURCE_URL = "/api/reports/"
+    
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 3
+        for item in body:
+            assert "description" in item
+
+    def test_post_valid_request(self, client):
+        valid = _get_report_json()
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
+
         
 class TestCommentCollection:
 

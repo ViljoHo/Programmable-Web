@@ -7,7 +7,9 @@ from issue_api import db
 from issue_api.models import Report
 from issue_api.utils import load_json_schema
 
+
 SCHEMA = load_json_schema("report.json")
+
 
 class ReportCollection(Resource):
 
@@ -37,7 +39,12 @@ class ReportCollection(Resource):
             "location": url_for("api.reportitem", report=report)
         })
 
+
 class ReportItem(Resource):
+
+    def get(self, report: Report):
+        return report.serialize(short_form=False)
+    
     def put(self, report: Report):
         if not request.json:
             raise UnsupportedMediaType
