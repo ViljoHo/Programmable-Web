@@ -6,7 +6,7 @@ from flask.testing import FlaskClient
 import pytest
 
 from issue_api import create_app, db
-from issue_api.models import ReportType
+from issue_api.models import ReportType, User, Report
 
 @pytest.fixture
 def client():
@@ -42,7 +42,20 @@ def _populate_db():
             name=f"test-report_type-{i}",
         )
 
+        user = User(
+            name=f"test-user-{i}",
+        )
+
+        report = Report(
+            user = user,
+            report_type = report_type,
+            description = f"test-description-{i}",
+            location = f"test-location-{i}",
+        )
+
         db.session.add(report_type)
+        db.session.add(user)
+        db.session.add(report)
 
     db.session.commit()
 
@@ -50,6 +63,13 @@ def _get_report_type_json(number=1):
     return {
         "name": f"new-report_type-{number}",
         "description": "some description",
+    }
+
+def _get_comment_json(number=1, user_id=1, report_id=1):
+    return {
+        "text": f"new-comment-{number}",
+        "user_id": user_id,
+        "report_id": report_id,
     }
 
 class TestResourceTypeCollection:
@@ -86,4 +106,11 @@ class TestResourceTypeCollection:
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
+class TestCommentCollection:
 
+    RESOURCE_URL = "/api/comments/"
+
+    def test_post_valid_request(self, client):
+        valid = _get_comment_json()
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
