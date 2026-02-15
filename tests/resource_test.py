@@ -138,11 +138,13 @@ class TestCommentCollection:
 
     RESOURCE_URL = "/api/comments/"
 
+    # POST a valid comment
     def test_post_valid_request(self, client):
         valid = _get_comment_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
     
+    # POST with an invalid user id
     def test_post_invalid_user_id_request(self, client):
         valid = _get_comment_json(user_id=56)
         resp = client.post(self.RESOURCE_URL, json=valid)
