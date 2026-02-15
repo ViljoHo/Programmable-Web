@@ -142,3 +142,8 @@ class TestCommentCollection:
         valid = _get_comment_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
+    
+    def test_post_invalid_user_id_request(self, client):
+        valid = _get_comment_json(user_id=56)
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
