@@ -69,6 +69,17 @@ class Comment(db.Model):
     user = db.relationship("User", back_populates="comments", passive_deletes=True)
     report = db.relationship("Report", back_populates="comments", passive_deletes=True)
 
+    def deserialize(self, json_dict):
+        self.text = json_dict["text"]
+
+        report_id = json_dict["report_id"]
+        report = Report.query.filter_by(id=report_id).first()
+        user_id = json_dict["user_id"]
+        user = User.query.filter_by(id=user_id).first()
+
+        self.report = report
+        self.user = user
+
     def serialize(self):
         return {
             "id": self.id,

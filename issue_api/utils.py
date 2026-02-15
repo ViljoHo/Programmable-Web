@@ -4,7 +4,7 @@ import os
 from werkzeug.exceptions import NotFound
 from werkzeug.routing import BaseConverter
 
-from .models import ReportType
+from .models import ReportType, Report, Comment
 
 SCHEMA_FOLDER_PATH = os.path.join(os.path.dirname(__file__), "static/schema/")
 
@@ -23,3 +23,25 @@ class ReportTypeConverter(BaseConverter):
 
     def to_url(self, db_report_type):
         return str(db_report_type.id)
+
+class ReportConverter(BaseConverter):
+
+    def to_python(self, report_id):
+        db_report = Report.query.get(report_id)
+        if db_report is None:
+            raise NotFound(description=f"Report with id '{report_id}' not found")
+        return db_report
+
+    def to_url(self, db_report):
+        return str(db_report.id)
+
+class CommentConverter(BaseConverter):
+
+    def to_python(self, comment_id):
+        db_comment = Comment.query.get(comment_id)
+        if db_comment is None:
+            raise NotFound(description=f"Comment with id '{comment_id}' not found")
+        return db_comment
+
+    def to_url(self, db_comment):
+        return str(db_comment.id)

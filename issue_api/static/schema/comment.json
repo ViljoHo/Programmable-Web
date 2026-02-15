@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "required": ["text", "user_id", "report_id"],
+    "properties": {
+        "report_id": {
+            "type": "number",
+            "description": "Report which the comment is posted for"
+        },
+        "user_id": {
+            "type": "number",
+            "description": "User who posted"
+        },
+        "text": {
+            "type": "string",
+            "description": "Content of comment"
+        }
+    }
+}
