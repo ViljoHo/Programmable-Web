@@ -2,7 +2,7 @@
     "type": "object",
     "required": ["user_id", "description", "location"],
     "properties": {
-        "type": {
+        "report_type_id": {
             "type": "number",
             "description": "Numerical ID of the report type"
         },

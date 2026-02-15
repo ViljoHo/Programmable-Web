@@ -23,7 +23,7 @@ class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
-    type = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
+    report_type_id = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
     description = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(64), nullable=False)
 
@@ -37,15 +37,15 @@ class Report(db.Model):
         
         user_id = json_dict["user_id"]
         self.user = User.query.filter_by(id=user_id).first()
-        type = json_dict["type"]
-        self.report_type = ReportType.query.filter_by(id=type).first()
+        report_type_id = json_dict["report_type_id"]
+        self.report_type = ReportType.query.filter_by(id=report_type_id).first()
 
     def serialize(self, short_form=False):
         doc = {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "type": self.type,
             "user": self.user.serialize(),
+            "report_type": self.report_type.serialize(),
             "description": self.description,
             "location": self.location,
         }

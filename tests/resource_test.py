@@ -67,7 +67,7 @@ def _get_report_type_json(number=1):
 
 def _get_report_json(number=1, report_type_id=1, user_id=1):
     return {
-        "type": report_type_id,
+        "report_type_id": report_type_id,
         "user_id": user_id,
         "description": f"new-report-{number}",
         "location": f"test location",
