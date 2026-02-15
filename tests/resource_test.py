@@ -153,6 +153,7 @@ class TestReportCollection:
 
     RESOURCE_URL = "/api/reports/"
     
+    # GET list of all reports
     def test_get(self, client):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
@@ -161,6 +162,7 @@ class TestReportCollection:
         for item in body:
             assert "description" in item
 
+    # POST a valid report
     def test_post_valid_request(self, client):
         valid = _get_report_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
