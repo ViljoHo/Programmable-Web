@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "issue_api"
+version = "0.0.1"
+dependencies = [
+    "flask==3.1.2",
+    "flask-restful==0.3.10",
+    "flask-sqlalchemy==3.1.1",
+    "jsonschema==4.26.0",
+    "pysqlite3==0.6.0",
+    "sqlalchemy==2.0.46",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==9.0.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["issue_api*"]

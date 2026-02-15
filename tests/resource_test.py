@@ -1,0 +1,89 @@
+import json
+import os
+import tempfile
+
+from flask.testing import FlaskClient
+import pytest
+
+from issue_api import create_app, db
+from issue_api.models import ReportType
+
+@pytest.fixture
+def client():
+    db_fd, db_file_name = tempfile.mkstemp()
+    config = {
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///" + db_file_name,
+        "TESTING": True,
+    }
+
+    app = create_app(config)
+
+    ctx = app.app_context()
+    ctx.push()
+
+    db.create_all()
+    _populate_db()
+
+    # app.test_client_class = FlaskClient
+    yield app.test_client()
+
+    db.session.rollback()
+    db.drop_all()
+    db.session.remove()
+    db.engine.dispose()
+    os.close(db_fd)
+    os.unlink(db_file_name)
+
+    ctx.pop()
+
+def _populate_db():
+    for i in range(1, 4):
+        report_type = ReportType(
+            name=f"test-report_type-{i}",
+        )
+
+        db.session.add(report_type)
+
+    db.session.commit()
+
+def _get_report_type_json(number=1):
+    return {
+        "name": f"new-report_type-{number}",
+        "description": "some description",
+    }
+
+class TestResourceTypeCollection:
+
+    RESOURCE_URL = "/api/report-types/"
+
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 3
+        for item in body:
+            assert "name" in item
+    
+    def test_post_valid_request(self, client):
+        valid = _get_report_type_json()
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
+    
+    def test_wrong_mediatype(self, client):
+        valid = _get_report_type_json()
+        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+
+    def test_post_missing_field(self, client):
+        valid = _get_report_type_json()
+        valid.pop("name")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
+    def test_post_name_conflict(self, client):
+        valid = _get_report_type_json()
+        valid["name"] = "test-report_type-1"
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+        
+
