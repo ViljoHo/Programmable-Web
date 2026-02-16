@@ -31,22 +31,14 @@ def require_admin(func):
         db_api_key = _authenticate()
         if not db_api_key.admin:
             raise Forbidden
-
-        return func(*args, **kwargs)
-        
+        return func(*args, user=db_api_key.user, **kwargs)
     return wrapper
 
-def require_user_or_admin_key(func):
+def require_api_key(func):
     @wraps(func)
-    def wrapper(self, user, *args, **kwargs):
-        db_api_key = _authenticate()
-        
-        if db_api_key.admin:
-            return func(*args, **kwargs)
-        
-        if db_api_key.user == user:
-            return func(*args, **kwargs)
-        raise Forbidden
+    def wrapper(*args, **kwargs):
+        api_key = _authenticate()
+        return func(*args, user=api_key.user, **kwargs)
     return wrapper
 
 class ReportTypeConverter(BaseConverter):
