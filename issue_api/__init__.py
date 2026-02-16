@@ -32,6 +32,7 @@ def create_app(test_config=None):
     from .utils import ReportTypeConverter, ReportConverter, CommentConverter, UserConverter
 
     app.cli.add_command(models.reset_db)
+    app.cli.add_command(models.create_admin_user)
 
     app.url_map.converters["report_type"] = ReportTypeConverter
     app.url_map.converters["report"] = ReportConverter

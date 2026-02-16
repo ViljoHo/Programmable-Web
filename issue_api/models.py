@@ -5,6 +5,7 @@ import click
 from flask.cli import with_appcontext
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import IntegrityError
 
 from . import db
 
@@ -108,7 +109,7 @@ class User(db.Model):
 
     reports = db.relationship("Report", back_populates="user", passive_deletes=True)
     comments = db.relationship("Comment", back_populates="user", passive_deletes=True)
-    api_key = db.relationship("ApiKey", back_populates="user", passive_deletes=True)
+    api_key = db.relationship("ApiKey", back_populates="user", cascade="all, delete-orphan")
 
     def deserialize(self, json_dict):
         self.name = json_dict["name"]
@@ -121,7 +122,7 @@ class User(db.Model):
     
 class ApiKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='CASCADE'), nullable=False)
     key = db.Column(db.String(32), unique=True, nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
@@ -146,3 +147,26 @@ def reset_db():
     db.drop_all()
     db.create_all()
     print("Database reset complete.")
+
+@click.command("create-admin-user")
+@click.option("--name", default="admin", help="Admin user name")
+@with_appcontext
+def create_admin_user(name):
+    import secrets
+    
+    try:
+        user = User(name=name)
+        token = secrets.token_urlsafe()
+        db_key = ApiKey(
+            key=ApiKey.key_hash(token),
+            admin=True,
+            user=user
+        )
+        db.session.add(db_key)
+        db.session.commit()
+        print(f"Admin user '{name}' created successfully")
+        print(f"Api-key: {token}")
+    except IntegrityError:
+        db.session.rollback()
+        print(f"Error: User '{name}' already exists")
+
