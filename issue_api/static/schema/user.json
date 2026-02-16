@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "required": ["name", "api_key"],
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Name of the user"
+        },
+        "api_key": {
+            "type": "string",
+            "description": "Api key for the user"
+        }
+    }
+}

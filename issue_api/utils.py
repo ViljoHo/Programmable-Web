@@ -6,7 +6,7 @@ from flask import request
 from werkzeug.exceptions import NotFound, Forbidden
 from werkzeug.routing import BaseConverter
 
-from issue_api.models import ReportType, Report, Comment, ApiKey
+from issue_api.models import ReportType, Report, Comment, ApiKey, User
 from issue_api.constants import API_KEY_HEADER
 
 SCHEMA_FOLDER_PATH = os.path.join(os.path.dirname(__file__), "static/schema/")
@@ -73,3 +73,14 @@ class CommentConverter(BaseConverter):
 
     def to_url(self, db_comment):
         return str(db_comment.id)
+    
+class UserConverter(BaseConverter):
+
+    def to_python(self, user_id):
+        db_user = User.query.filter_by(id=user_id).first()
+        if db_user is None:
+            raise NotFound(description=f"User with id '{user_id}' not found")
+        return db_user
+
+    def to_url(self, db_user):
+        return str(db_user.id)

@@ -110,6 +110,9 @@ class User(db.Model):
     comments = db.relationship("Comment", back_populates="user", passive_deletes=True)
     api_key = db.relationship("ApiKey", back_populates="user", passive_deletes=True)
 
+    def deserialize(self, json_dict):
+        self.name = json_dict["name"]
+
     def serialize(self):
         return {
             "id": self.id,
