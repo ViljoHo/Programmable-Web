@@ -6,10 +6,11 @@ from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
 from issue_api import db
 from issue_api.models import ReportType
-from issue_api.utils import load_json_schema
+from issue_api.utils import load_json_schema, require_admin
 
 REPORT_TYPE_SCHEMA = load_json_schema("report_type.json")
 
+# Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/sensorhub/resources/sensor.py
 class ReportTypeCollection(Resource):
 
     def get(self):
@@ -19,6 +20,8 @@ class ReportTypeCollection(Resource):
             response_data.append(report_type.serialize())
         return response_data
 
+
+    @require_admin
     def post(self):
         if not request.json:
             raise UnsupportedMediaType
@@ -44,7 +47,10 @@ class ReportTypeCollection(Resource):
             "Location": url_for("api.reporttypeitem", report_type=report_type)
         })
 
+# Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/sensorhub/resources/sensor.py
 class ReportTypeItem(Resource):
+
+    @require_admin
     def put(self, report_type: ReportType):
         if not request.json:
             raise UnsupportedMediaType
@@ -67,6 +73,7 @@ class ReportTypeItem(Resource):
 
         return Response(status=204)
 
+    @require_admin
     def delete(self, report_type: ReportType):
         db.session.delete(report_type)
         db.session.commit()

@@ -1,0 +1,1 @@
+API_KEY_HEADER = 'Issue-Api-Key'
