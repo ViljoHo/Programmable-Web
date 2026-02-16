@@ -1,6 +1,7 @@
 from functools import wraps
 import json
 import os
+import secrets
 
 from flask import request
 from werkzeug.exceptions import NotFound, Forbidden
@@ -34,11 +35,20 @@ def require_admin(func):
         return func(*args, user=db_api_key.user, **kwargs)
     return wrapper
 
-def require_api_key(func):
+def require_owner_or_admin_api_key(func):
+
     @wraps(func)
-    def wrapper(*args, **kwargs):
-        api_key = _authenticate()
-        return func(*args, user=api_key.user, **kwargs)
+    def wrapper(self, user, *args, **kwargs):
+
+        db_api_key = _authenticate()
+        if db_api_key.admin:
+            return func(self, user, *args, **kwargs)
+
+        key_hash = ApiKey.key_hash(request.headers.get(API_KEY_HEADER, "").strip())
+        db_key = ApiKey.query.filter_by(user=user).first()
+        if db_key is not None and secrets.compare_digest(key_hash, db_key.key):
+            return func(self, user, *args, **kwargs)
+        raise Forbidden
     return wrapper
 
 class ReportTypeConverter(BaseConverter):

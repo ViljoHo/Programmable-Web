@@ -4,9 +4,10 @@ from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
+
 from issue_api import db
 from issue_api.models import User, ApiKey
-from issue_api.utils import load_json_schema
+from issue_api.utils import load_json_schema, require_owner_or_admin_api_key
 
 
 SCHEMA = load_json_schema("user.json")
@@ -44,7 +45,7 @@ class UserCollection(Resource):
             db.session.commit()
         except IntegrityError:
             raise Conflict(
-                description="User with name '{name}' already exists.".format(
+                description="User with name '{name}' or given api key already exists.".format(
                     **request.json
                 )
             )
@@ -56,6 +57,7 @@ class UserCollection(Resource):
 
 class UserItem(Resource):
 
+    @require_owner_or_admin_api_key
     def delete(self, user: User):
         db.session.delete(user)
         db.session.commit()
