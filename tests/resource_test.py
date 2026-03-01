@@ -163,7 +163,7 @@ class TestReportTypeCollection:
     def test_unauthorized(self, client):
         valid = _get_report_type_json()
         resp = client.post(self.RESOURCE_URL, json=valid, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 class TestReportTypeItem:
@@ -206,9 +206,9 @@ class TestReportTypeItem:
     def test_unauthorized(self, client):
         valid = _get_report_type_json()
         resp = client.put(self.RESOURCE_URL, json=valid, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
 
 class TestReportCollection:
 
@@ -250,7 +250,21 @@ class TestCommentItem:
 
     RESOURCE_URL = "/api/comments/1/"
 
-    # Only allow DELETE with admin key
+    # Only allow DELETE with admin key or correct user API key
     def test_unauthorized(self, client):
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
+
+class TestReportUpvote:
+    
+    RESOURCE_URL = "/api/reports/1/upvote/"
+    
+    # Only allow POST with valid API key
+    def test_post_unauthorized(self, client):
+        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        assert resp.status_code == 401
+    
+    # Only allow DELETE with valid API key
+    def test_delete_unauthorized(self, client):
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        assert resp.status_code == 401

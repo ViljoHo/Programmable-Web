@@ -9,12 +9,8 @@ from issue_api.utils import get_authenticated_user
 
 class ReportUpvote(Resource):
     
-    def post(self, report_id):
+    def post(self, report: Report):
         user = get_authenticated_user()
-        
-        report = Report.query.get(report_id)
-        if not report:
-            raise NotFound("Report not found")
 
         if report in user.reports_upvoted:
             raise Conflict("You have already upvoted this report")
@@ -24,12 +20,8 @@ class ReportUpvote(Resource):
 
         return Response(status=201)
 
-    def delete(self, report_id):
+    def delete(self, report: Report):
         user = get_authenticated_user()
-
-        report = Report.query.get(report_id)
-        if not report:
-            raise NotFound("Report not found")
 
         if report not in user.reports_upvoted:
             raise NotFound("You have not upvoted this report")
