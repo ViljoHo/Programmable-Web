@@ -1,7 +1,6 @@
 from functools import wraps
 import json
 import os
-import secrets
 
 from flask import request
 from werkzeug.exceptions import NotFound, Forbidden, Unauthorized
@@ -18,47 +17,46 @@ def load_json_schema(file_name: str):
         return json.load(file)
 
 def _authenticate():
-    key_hash = ApiKey.key_hash(request.headers.get(API_KEY_HEADER, "").strip())
-    if not key_hash:
+    key = request.headers.get(API_KEY_HEADER, "").strip()
+    if not key:
         raise Forbidden("Missing API key")
+    key_hash = ApiKey.key_hash(key)
     db_api_key = ApiKey.query.filter_by(key=key_hash).first()
     if db_api_key is None:
         raise Forbidden("Invalid API key")
     return db_api_key
+
+def get_authenticated_user():
+    api_key = _authenticate()
+    return api_key.user
 
 def require_admin(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         db_api_key = _authenticate()
         if not db_api_key.admin:
-            raise Forbidden
-        return func(*args, user=db_api_key.user, **kwargs)
+            raise Forbidden("Only an admin can perform this action")
+        return func(*args, auth_user=db_api_key.user, **kwargs)
     return wrapper
 
-def require_owner_or_admin_api_key(func):
-
+def require_api_key(func):
     @wraps(func)
-    def wrapper(self, user, *args, **kwargs):
-
+    def wrapper(*args, **kwargs):
         db_api_key = _authenticate()
-        if db_api_key.admin:
-            return func(self, user, *args, **kwargs)
-
-        key_hash = ApiKey.key_hash(request.headers.get(API_KEY_HEADER, "").strip())
-        db_key = ApiKey.query.filter_by(user=user).first()
-        if db_key is not None and secrets.compare_digest(key_hash, db_key.key):
-            return func(self, user, *args, **kwargs)
-        raise Forbidden
+        return func(*args, auth_user=db_api_key.user, **kwargs)
     return wrapper
 
-def get_authenticated_user():
-    api_key = request.headers.get('X-API-Key')
-    if not api_key:
-        raise Unauthorized("API Key is missing")
-    
-    user = User.query.filter_by(api_key=api_key).first()
-    if not user:
-        raise Unauthorized("Invalid API Key")
+def require_owner_or_admin(resource_name, owner_field="user_id"):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            db_api_key = _authenticate()
+            resource = kwargs[resource_name]
+            if not db_api_key.admin and getattr(resource, owner_field) != db_api_key.user.id:
+                raise Forbidden("Only an admin or the resource owner can perform this action")
+            return func(*args, auth_user=db_api_key.user, **kwargs)
+        return wrapper
+    return decorator
 
 class ReportTypeConverter(BaseConverter):
 
