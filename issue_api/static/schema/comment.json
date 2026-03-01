@@ -1,11 +1,7 @@
 {
     "type": "object",
-    "required": ["text", "user_id"],
+    "required": ["text"],
     "properties": {
-        "user_id": {
-            "type": "number",
-            "description": "User who posted"
-        },
         "text": {
             "type": "string",
             "description": "Content of comment"
