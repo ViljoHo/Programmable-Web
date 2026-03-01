@@ -82,6 +82,7 @@ def _populate_db():
         db.session.add(user)
         db.session.add(report)
         db.session.add(comment)
+        user.reports_upvoted.append(report)
 
     admin_user = User(
         name=f"test-admin-user-{i}",
@@ -215,6 +216,8 @@ class TestReportCollection:
         assert len(body) == REPORT_TYPE_AMOUNT
         for item in body:
             assert "description" in item
+            assert "upvotes" in item
+            assert item["upvotes"] == 1
 
     # POST valid report
     def test_post(self, client):
