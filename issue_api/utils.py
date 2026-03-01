@@ -9,7 +9,9 @@ from werkzeug.routing import BaseConverter
 from issue_api.models import ReportType, Report, Comment, ApiKey, User
 from issue_api.constants import API_KEY_HEADER
 
+
 SCHEMA_FOLDER_PATH = os.path.join(os.path.dirname(__file__), "static/schema/")
+
 
 def load_json_schema(file_name: str):
     schema_path = os.path.join(SCHEMA_FOLDER_PATH, file_name)
@@ -19,11 +21,11 @@ def load_json_schema(file_name: str):
 def _authenticate():
     key = request.headers.get(API_KEY_HEADER, "").strip()
     if not key:
-        raise Forbidden("Missing API key")
+        raise Unauthorized("Missing API key")
     key_hash = ApiKey.key_hash(key)
     db_api_key = ApiKey.query.filter_by(key=key_hash).first()
     if db_api_key is None:
-        raise Forbidden("Invalid API key")
+        raise Unauthorized("Invalid API key")
     return db_api_key
 
 def get_authenticated_user():
