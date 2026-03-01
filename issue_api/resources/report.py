@@ -5,7 +5,7 @@ from werkzeug.exceptions import BadRequest, UnsupportedMediaType
 
 from issue_api import db
 from issue_api.models import Report
-from issue_api.utils import load_json_schema
+from issue_api.utils import load_json_schema, require_api_key
 
 
 SCHEMA = load_json_schema("report.json")
@@ -25,6 +25,7 @@ class ReportCollection(Resource):
             response_data.append(report.serialize(short_form=True))
         return response_data
 
+    @require_api_key
     def post(self):
         if not request.json:
             raise UnsupportedMediaType
