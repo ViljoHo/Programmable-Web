@@ -103,11 +103,10 @@ def _get_report_json(number=1, report_type_id=1, user_id=1):
         "location": f"test location",
     }
 
-def _get_comment_json(number=1, user_id=1, report_id=1):
+def _get_comment_json(number=1, user_id=1):
     return {
         "text": f"new-comment-{number}",
         "user_id": user_id,
-        "report_id": report_id,
     }
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
@@ -227,7 +226,7 @@ class TestReportCollection:
         
 class TestCommentCollection:
 
-    RESOURCE_URL = "/api/comments/"
+    RESOURCE_URL = "/api/reports/1/comments/"
 
     # POST a valid comment
     def test_post_valid_request(self, client):
