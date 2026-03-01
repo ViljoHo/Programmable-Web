@@ -4,9 +4,8 @@ from werkzeug.exceptions import NotFound, Conflict
 
 from issue_api import db
 from issue_api.models import Report
-from issue_api.utils import load_json_schema, get_authenticated_user
+from issue_api.utils import get_authenticated_user
 
-SCHEMA = load_json_schema("comment.json")
 
 class ReportUpvote(Resource):
     
