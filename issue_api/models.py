@@ -89,14 +89,6 @@ class Comment(db.Model):
     def deserialize(self, json_dict):
         self.text = json_dict["text"]
 
-        user_id = json_dict["user_id"]
-        user = User.query.filter_by(id=user_id).first()
-
-        if None in [ user]:
-            raise ValueError("User not found")
-
-        self.user = user
-
     def serialize(self):
         return {
             "id": self.id,

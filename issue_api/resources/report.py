@@ -55,7 +55,7 @@ class ReportItem(Resource):
         return report.serialize(short_form=False)
     
     @require_owner_or_admin("report", "user_id")
-    def put(self, report: Report):
+    def put(self, auth_user, report: Report):
         if not request.json:
             raise UnsupportedMediaType
 
@@ -72,7 +72,7 @@ class ReportItem(Resource):
         return Response(status=204)
 
     @require_owner_or_admin("report", "user_id")
-    def delete(self, report: Report):
+    def delete(self, auth_user, report: Report):
         db.session.delete(report)
         db.session.commit()
         return Response(status=204)
