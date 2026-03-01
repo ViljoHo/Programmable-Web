@@ -4,7 +4,7 @@ import os
 import secrets
 
 from flask import request
-from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.exceptions import NotFound, Forbidden, Unauthorized
 from werkzeug.routing import BaseConverter
 
 from issue_api.models import ReportType, Report, Comment, ApiKey, User
@@ -50,6 +50,15 @@ def require_owner_or_admin_api_key(func):
             return func(self, user, *args, **kwargs)
         raise Forbidden
     return wrapper
+
+def get_authenticated_user():
+    api_key = request.headers.get('X-API-Key')
+    if not api_key:
+        raise Unauthorized("API Key is missing")
+    
+    user = User.query.filter_by(api_key=api_key).first()
+    if not user:
+        raise Unauthorized("Invalid API Key")
 
 class ReportTypeConverter(BaseConverter):
 

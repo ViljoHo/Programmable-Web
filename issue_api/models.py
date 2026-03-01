@@ -109,6 +109,7 @@ class User(db.Model):
 
     reports = db.relationship("Report", back_populates="user", passive_deletes=True)
     comments = db.relationship("Comment", back_populates="user", passive_deletes=True)
+    upvoted_reports = db.relationship("Report", secondary=upvotes, backref="upvoted_by")
     api_key = db.relationship("ApiKey", back_populates="user", cascade="all, delete-orphan")
 
     def deserialize(self, json_dict):
