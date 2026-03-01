@@ -130,7 +130,7 @@ class TestReportTypeCollection:
             assert "name" in item
 
     # POST a valid report type
-    def test_post_valid_request(self, client):
+    def test_post(self, client):
         valid = _get_report_type_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
@@ -172,7 +172,7 @@ class TestReportTypeItem:
     INVALID_URL = "/api/test/report-types/99999/"
 
     # PUT a valid report type
-    def test_put_valid_request(self, client):
+    def test_put(self, client):
         valid = _get_report_type_json()
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 204
@@ -224,10 +224,28 @@ class TestReportCollection:
             assert "description" in item
 
     # POST a valid report
-    def test_post_valid_request(self, client):
+    def test_post(self, client):
         valid = _get_report_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
+        
+    # POST report with missing JSON
+    def test_post_wrong_mediatype(self, client):
+        resp = client.post(self.RESOURCE_URL)
+        assert resp.status_code == 415
+
+    # POST report with invalid JSON
+    def test_post_missing_field(self, client):
+        valid = _get_report_type_json()
+        valid.pop("name")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+    
+    # POST with an invalid API key
+    def test_unauthorized(self, client):
+        valid = _get_report_json()
+        resp = client.post(self.RESOURCE_URL, json=valid, headers={API_KEY_HEADER: "wrongkey"})
+        assert resp.status_code == 401
 
         
 class TestCommentCollection:
@@ -235,13 +253,13 @@ class TestCommentCollection:
     RESOURCE_URL = "/api/reports/1/comments/"
 
     # POST a valid comment
-    def test_post_valid_request(self, client):
+    def test_post(self, client):
         valid = _get_comment_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
     
     # POST with an invalid user id
-    def test_post_invalid_user_id_request(self, client):
+    def test_post_invalid_user_id(self, client):
         valid = _get_comment_json(user_id=56)
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 404
@@ -258,19 +276,9 @@ class TestCommentItem:
 class TestReportUpvote:
     
     RESOURCE_URL = "/api/reports/1/upvote/"
-    
-    # POST with an invalid API key
-    def test_post_unauthorized(self, client):
-        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
-    
-    # DELETE with an invalid API key
-    def test_delete_unauthorized(self, client):
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
         
     # POST and DELETE with a valid API key
-    def test_post_delete_authorized(self, client):
+    def test_authorized(self, client):
         resp = client.post(self.RESOURCE_URL)
         assert resp.status_code == 201 # POST SUCCESS
         resp = client.post(self.RESOURCE_URL)
@@ -279,3 +287,10 @@ class TestReportUpvote:
         assert resp.status_code == 204 # DELETE SUCCESS
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 404 # NOT FOUND
+    
+    # POST and DELETE with an invalid API key
+    def test_unauthorized(self, client):
+        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        assert resp.status_code == 401
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        assert resp.status_code == 401
