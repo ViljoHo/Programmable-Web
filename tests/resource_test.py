@@ -8,7 +8,7 @@ from werkzeug.datastructures import Headers
 
 from issue_api import create_app, db
 from issue_api.constants import API_KEY_HEADER
-from issue_api.models import ReportType, User, Report, ApiKey
+from issue_api.models import ReportType, User, Report, ApiKey, Comment
 
 REPORT_TYPE_AMOUNT = 3
 TEST_KEY = "testingkey"
@@ -72,10 +72,16 @@ def _populate_db():
             location = f"test-location-{i}",
         )
 
+        comment = Comment(
+            user=user,
+            report=report,
+            text=f"test-text-{i}"
+        )
+
         db.session.add(report_type)
         db.session.add(user)
         db.session.add(report)
-
+        db.session.add(comment)
 
     admin_user = User(
         name=f"test-admin-user-{i}",
@@ -239,3 +245,12 @@ class TestCommentCollection:
         valid = _get_comment_json(user_id=56)
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 404
+
+class TestCommentItem:
+
+    RESOURCE_URL = "/api/comments/1/"
+
+    # Only allow DELETE with admin key
+    def test_unauthorized(self, client):
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        assert resp.status_code == 403

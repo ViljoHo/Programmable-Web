@@ -6,12 +6,13 @@ from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
 from issue_api import db
 from issue_api.models import Comment, Report
-from issue_api.utils import load_json_schema
+from issue_api.utils import load_json_schema, require_owner_or_admin
 
 SCHEMA = load_json_schema("comment.json")
 
 class CommentCollection(Resource):
 
+    
     def post(self, report: Report):
         if not request.json:
             raise UnsupportedMediaType
@@ -38,7 +39,8 @@ class CommentCollection(Resource):
 
 class CommentItem(Resource):
 
-    def delete(self, comment: Comment):
+    @require_owner_or_admin("comment", "user_id")
+    def delete(self, auth_user, comment: Comment):
         db.session.delete(comment)
         db.session.commit()
         return Response(status=204)
