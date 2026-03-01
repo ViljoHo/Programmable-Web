@@ -259,12 +259,23 @@ class TestReportUpvote:
     
     RESOURCE_URL = "/api/reports/1/upvote/"
     
-    # Only allow POST with valid API key
+    # POST with an invalid API key
     def test_post_unauthorized(self, client):
         resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
     
-    # Only allow DELETE with valid API key
+    # DELETE with an invalid API key
     def test_delete_unauthorized(self, client):
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
+        
+    # POST and DELETE with a valid API key
+    def test_post_delete_authorized(self, client):
+        resp = client.post(self.RESOURCE_URL)
+        assert resp.status_code == 201 # POST SUCCESS
+        resp = client.post(self.RESOURCE_URL)
+        assert resp.status_code == 409 # ALREADY UPVOTED
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204 # DELETE SUCCESS
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 404 # NOT FOUND
