@@ -139,10 +139,9 @@ class TestReportTypeCollection:
         resp = client.put(resp.headers["Location"], json=valid)
         assert resp.status_code == 204
     
-    # POST a wrong mediatype. Expect not allowed
-    def test_post_wrong_mediatype(self, client):
-        valid = _get_report_type_json()
-        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+    # POST wrong media type (text/plain)
+    def test_post_wrong_media_type(self, client):
+        resp = client.post(self.RESOURCE_URL)
         assert resp.status_code == 415
 
     # POST a report type with a missing mandatory field. Expect not allowed
@@ -174,10 +173,9 @@ class TestReportTypeItem:
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 204
 
-    # PUT a wrong mediatype. Expect not allowed
-    def test_put_wrong_mediatype(self, client):
-        valid = _get_report_type_json()
-        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+    # PUT wrong media type (text/plain)
+    def test_put_wrong_media_type(self, client):
+        resp = client.put(self.RESOURCE_URL)
         assert resp.status_code == 415
 
     # PUT a report type with a missing mandatory field. Expect not allowed
@@ -225,8 +223,8 @@ class TestReportCollection:
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
         
-    # POST report with missing JSON
-    def test_post_wrong_mediatype(self, client):
+    # POST wrong media type (text/plain)
+    def test_post_wrong_media_type(self, client):
         resp = client.post(self.RESOURCE_URL)
         assert resp.status_code == 415
 
@@ -250,8 +248,8 @@ class TestReportItem:
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 204
 
-    # PUT report with missing JSON
-    def test_put_wrong_mediatype(self, client):
+    # PUT wrong media type (text/plain)
+    def test_put_wrong_media_type(self, client):
         resp = client.put(self.RESOURCE_URL)
         assert resp.status_code == 415
 
@@ -282,8 +280,8 @@ class TestCommentCollection:
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
         
-    # POST comment with missing JSON
-    def test_post_wrong_mediatype(self, client):
+    # POST wrong media type (text/plain)
+    def test_post_wrong_media_type(self, client):
         resp = client.post(self.RESOURCE_URL)
         assert resp.status_code == 415
 
