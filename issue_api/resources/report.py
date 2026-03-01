@@ -5,7 +5,7 @@ from werkzeug.exceptions import BadRequest, UnsupportedMediaType
 
 from issue_api import db
 from issue_api.models import Report
-from issue_api.utils import load_json_schema, require_api_key
+from issue_api.utils import load_json_schema, require_api_key, require_owner_or_admin
 
 
 SCHEMA = load_json_schema("report.json")
@@ -54,6 +54,7 @@ class ReportItem(Resource):
     def get(self, report: Report):
         return report.serialize(short_form=False)
     
+    @require_owner_or_admin("report", "user_id")
     def put(self, report: Report):
         if not request.json:
             raise UnsupportedMediaType
@@ -70,6 +71,7 @@ class ReportItem(Resource):
 
         return Response(status=204)
 
+    @require_owner_or_admin("report", "user_id")
     def delete(self, report: Report):
         db.session.delete(report)
         db.session.commit()
