@@ -5,14 +5,14 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
 from issue_api import db
-from issue_api.models import Comment
+from issue_api.models import Comment, Report
 from issue_api.utils import load_json_schema
 
 SCHEMA = load_json_schema("comment.json")
 
 class CommentCollection(Resource):
 
-    def post(self):
+    def post(self, report: Report):
         if not request.json:
             raise UnsupportedMediaType
 
@@ -28,6 +28,7 @@ class CommentCollection(Resource):
         except ValueError as err:
             return Response(str(err), status=404)
 
+        comment.report = report
         db.session.add(comment)
         db.session.commit()
 
