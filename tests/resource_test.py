@@ -144,12 +144,12 @@ class TestReportTypeCollection:
         resp = client.post(self.RESOURCE_URL)
         assert resp.status_code == 415
 
-    # POST a report type with a missing mandatory field. Expect not allowed
+    # POST a report type with a missing mandatory field
     def test_post_missing_field(self, client):
         resp = client.post(self.RESOURCE_URL, json={"":""})
         assert resp.status_code == 400
 
-    # POST a report type with already existing name (name must be unique). Expect not allowed 
+    # POST a report type with already existing name (name must be unique) 
     def test_post_name_conflict(self, client):
         valid = _get_report_type_json()
         valid["name"] = "test-report_type-1"
@@ -178,12 +178,12 @@ class TestReportTypeItem:
         resp = client.put(self.RESOURCE_URL)
         assert resp.status_code == 415
 
-    # PUT a report type with a missing mandatory field. Expect not allowed
+    # PUT a report type with a missing mandatory field
     def test_put_missing_field(self, client):
         resp = client.put(self.RESOURCE_URL, json={"":""})
         assert resp.status_code == 400
 
-    # PUT a report type to already existing name (name must be unique). Expect not allowed
+    # PUT a report type to already existing name (name must be unique)
     def test_put_name_conflict(self, client):
         valid = _get_report_type_json()
         valid["name"] = "test-report_type-2"
