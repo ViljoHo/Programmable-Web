@@ -26,7 +26,7 @@ class ReportCollection(Resource):
         return response_data
 
     @require_api_key
-    def post(self):
+    def post(self, auth_user):
         if not request.json:
             raise UnsupportedMediaType
 
