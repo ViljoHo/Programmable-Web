@@ -51,6 +51,7 @@ class Report(db.Model):
             "report_type": self.report_type.serialize(True),
             "description": self.description,
             "location": self.location,
+            "upvotes": len(self.upvoted_by)
         }
         if not short_form:
             doc["comments"] = [comment.serialize() for comment in self.comments]
