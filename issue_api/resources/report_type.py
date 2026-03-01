@@ -21,7 +21,7 @@ class ReportTypeCollection(Resource):
         return response_data
 
     @require_admin
-    def post(self, user):
+    def post(self, auth_user):
         if not request.json:
             raise UnsupportedMediaType
 
@@ -50,7 +50,7 @@ class ReportTypeCollection(Resource):
 class ReportTypeItem(Resource):
 
     @require_admin
-    def put(self, user,  report_type: ReportType):
+    def put(self, auth_user, report_type: ReportType):
         if not request.json:
             raise UnsupportedMediaType
 
@@ -73,7 +73,7 @@ class ReportTypeItem(Resource):
         return Response(status=204)
 
     @require_admin
-    def delete(self, user, report_type: ReportType):
+    def delete(self, auth_user, report_type: ReportType):
         db.session.delete(report_type)
         db.session.commit()
         return Response(status=204)
