@@ -171,4 +171,3 @@ def create_admin_user(name):
     except IntegrityError:
         db.session.rollback()
         print(f"Error: User '{name}' already exists")
-

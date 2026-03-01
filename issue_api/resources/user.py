@@ -7,7 +7,7 @@ from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
 from issue_api import db
 from issue_api.models import User, ApiKey
-from issue_api.utils import load_json_schema, require_owner_or_admin_api_key
+from issue_api.utils import load_json_schema, require_admin, require_owner_or_admin
 
 
 SCHEMA = load_json_schema("user.json")
@@ -15,7 +15,8 @@ SCHEMA = load_json_schema("user.json")
 
 class UserCollection(Resource):
 
-    def get(self):
+    @require_admin
+    def get(self, auth_user):
         response_data = []
         users = User.query.all()
         for user in users:
@@ -57,8 +58,8 @@ class UserCollection(Resource):
 
 class UserItem(Resource):
 
-    @require_owner_or_admin_api_key
-    def delete(self, user: User):
+    @require_owner_or_admin("user", "id")
+    def delete(self, auth_user, user: User):
         db.session.delete(user)
         db.session.commit()
         return Response(status=204)
