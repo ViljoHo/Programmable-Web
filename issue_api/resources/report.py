@@ -14,8 +14,13 @@ SCHEMA = load_json_schema("report.json")
 class ReportCollection(Resource):
 
     def get(self):
+        user_id = request.args.get("user_id")
+
         response_data = []
-        reports = Report.query.all()
+        if user_id:
+            reports = Report.query.filter_by(user_id=user_id).all()
+        else:
+            reports = Report.query.all()
         for report in reports:
             response_data.append(report.serialize(short_form=True))
         return response_data
@@ -30,8 +35,11 @@ class ReportCollection(Resource):
             raise BadRequest(description=str(err))
 
         report = Report()
-        report.deserialize(json_dict=request.json)
-        
+        try:
+            report.deserialize(json_dict=request.json)
+        except ValueError as err:
+            return Response(str(err), status=404)
+
         db.session.add(report)
         db.session.commit()
 

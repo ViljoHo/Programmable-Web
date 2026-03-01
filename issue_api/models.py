@@ -33,7 +33,12 @@ class Report(db.Model):
     comments = db.relationship("Comment", back_populates="report", passive_deletes=True)
 
     def deserialize(self, json_dict):
-        self.user_id = json_dict["user_id"]
+        user_id = json_dict["user_id"]
+
+        user = User.query.filter_by(id=user_id).first()
+        if User == None:
+            raise ValueError("User not found")
+
         self.report_type_id = json_dict["report_type_id"]
         self.description = json_dict["description"]
         self.location = json_dict["location"]
@@ -84,15 +89,12 @@ class Comment(db.Model):
     def deserialize(self, json_dict):
         self.text = json_dict["text"]
 
-        report_id = json_dict["report_id"]
-        report = Report.query.filter_by(id=report_id).first()
         user_id = json_dict["user_id"]
         user = User.query.filter_by(id=user_id).first()
 
-        if None in [report, user]:
-            raise ValueError("User or report not found")
+        if None in [ user]:
+            raise ValueError("User not found")
 
-        self.report = report
         self.user = user
 
     def serialize(self):
@@ -170,4 +172,3 @@ def create_admin_user(name):
     except IntegrityError:
         db.session.rollback()
         print(f"Error: User '{name}' already exists")
-
