@@ -229,7 +229,12 @@ class TestReportCollection:
         body = json.loads(resp.data)
         assert len(body) == RESOURCE_AMOUNT
         for item in body:
+            assert "id" in item
+            assert "timestamp" in item
+            assert "user_name" in item
+            assert "report_type" in item
             assert "description" in item
+            assert "location" in item
             assert "upvotes" in item
             assert item["upvotes"] == 1
 
@@ -258,6 +263,22 @@ class TestReportItem:
 
     RESOURCE_URL = "/api/reports/1/"
     
+    # GET valid report
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert "id" in body
+        assert "timestamp" in body
+        assert "user_name" in body
+        assert "report_type" in body
+        assert "description" in body
+        assert "location" in body
+        assert "upvotes" in body
+        assert body["upvotes"] == 1
+        assert "comments" in body
+        assert len(body["comments"]) == 1
+
     # PUT valid report
     def test_put(self, client):
         valid = _get_report_json()
