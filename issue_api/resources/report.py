@@ -36,11 +36,13 @@ class ReportCollection(Resource):
             raise BadRequest(description=str(err))
 
         report = Report()
+        
         try:
             report.deserialize(json_dict=request.json)
         except ValueError as err:
             return Response(str(err), status=404)
 
+        report.user = auth_user
         db.session.add(report)
         db.session.commit()
 
