@@ -180,7 +180,7 @@ class TestReportTypeCollection:
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 class TestReportTypeItem:
 
-    RESOURCE_URL = "api/report-types/1/"
+    RESOURCE_URL = "/api/report-types/1/"
     INVALID_URL = "/api/test/report-types/99999/"
 
     # PUT a valid report type
@@ -210,6 +210,11 @@ class TestReportTypeItem:
     def test_delete(self, client):
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 204
+    
+    # DELETE nonexistent report type
+    def test_delete_not_found(self, client):
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404
 
     # Only allow PUT or DELETE with admin key 
     def test_forbidden(self, client):
@@ -238,6 +243,17 @@ class TestReportCollection:
             assert "upvotes" in item
             assert item["upvotes"] == 1
 
+    # GET list of reports for a specific user
+    def test_get_filtered(self, client):
+        url = self.RESOURCE_URL + "?user_id=1"
+        resp = client.get(url)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 1
+        for item in body:
+            assert "user_name" in item
+            assert item["user_name"] == "test-user-1"
+
     # POST valid report
     def test_post(self, client):
         valid = _get_report_json()
@@ -262,6 +278,7 @@ class TestReportCollection:
 class TestReportItem:
 
     RESOURCE_URL = "/api/reports/1/"
+    INVALID_URL = "/api/reports/99999/"
     
     # GET valid report
     def test_get(self, client):
@@ -299,6 +316,11 @@ class TestReportItem:
     def test_delete(self, client):
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 204
+    
+    # DELETE nonexistent report
+    def test_delete_not_found(self, client):
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404
 
     # Only allow PUT and DELETE with admin key or correct user key
     def test_forbidden(self, client):
@@ -335,11 +357,17 @@ class TestCommentCollection:
 class TestCommentItem:
 
     RESOURCE_URL = "/api/comments/1/"
+    INVALID_URL = "/api/comments/99999/"
     
     # DELETE existing comment
     def test_delete(self, client):
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 204
+
+    # DELETE nonexistent comment
+    def test_delete_not_found(self, client):
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404
 
     # Only allow DELETE with admin key or correct user key
     def test_forbidden(self, client):
@@ -366,7 +394,7 @@ class TestReportUpvote:
         assert resp.status_code == 409
     
     # DELETE nonexistent upvote
-    def test_not_found(self, client):
+    def test_delete_not_found(self, client):
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 404
     
@@ -437,13 +465,13 @@ class TestUserItem:
     RESOURCE_URL = "api/users/1/"
     INVALID_URL = "/api/users/99999/"
     
-    # DELETE an existing user
+    # DELETE existing user
     def test_delete(self, client):
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 204
 
-    # DELETE an unexisting user
-    def test_delete_unexisting(self, client):
+    # DELETE nonexistent user
+    def test_delete_not_found(self, client):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404
 
