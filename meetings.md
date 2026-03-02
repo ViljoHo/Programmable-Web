@@ -1,27 +1,29 @@
 # Meetings minutes
 
 ## Meeting 1.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
+* **DATE: 5.2.2026**
+* **PARTICIPANTS: All**
+* **TEACHER: Mika Oja**
 
 ### Action points
-*List here the actions points discussed with assistants*
+- Make a related work section more consistens
+- Think more like machine to machine. API consumers = other services, not humans.
 
 ### Notes
-*Add here notes that you consider important. This is not mandatory*
+- api -> geo api
 
 
 ## Meeting 2.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
+* **DATE: 11.2.2026**
+* **PARTICIPANTS: All**
+* **TEACHER: Ivan**
 
 ### Action points
-*List here the actions points discussed with assistants*
+- Upvote just a table or resource?
+-
 
 ### Notes
-*Add here notes that you consider important. This is not mandatory*
+
 
 
 ## Meeting 3.
