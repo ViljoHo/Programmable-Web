@@ -359,6 +359,11 @@ class TestCommentCollection:
     def test_unauthorized(self, client):
         resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
+    
+    # POST comment with no API key
+    def test_missing_key(self, client):
+        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: ''})
+        assert resp.status_code == 401
 
 class TestCommentItem:
 
