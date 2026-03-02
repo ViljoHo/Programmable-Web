@@ -20,11 +20,7 @@ class CommentCollection(Resource):
             raise BadRequest(description=str(err))
 
         comment = Comment()
-
-        try:
-            comment.deserialize(json_dict=request.json)
-        except ValueError as err:
-            return Response(str(err), status=404)
+        comment.deserialize(json_dict=request.json)
 
         comment.user = auth_user
         comment.report = report
