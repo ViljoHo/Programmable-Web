@@ -4,11 +4,12 @@ import tempfile
 
 import pytest
 from flask.testing import FlaskClient
+from click.testing import CliRunner
 from werkzeug.datastructures import Headers
 
 from issue_api import create_app, db
 from issue_api.utils import API_KEY_HEADER
-from issue_api.models import ReportType, User, Report, ApiKey, Comment
+from issue_api.models import ReportType, User, Report, ApiKey, Comment, reset_db, create_admin_user
 
 
 RESOURCE_AMOUNT = 3
@@ -32,7 +33,7 @@ class AuthHeaderClient(FlaskClient):
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 @pytest.fixture
-def client():
+def app():
     db_fd, db_file_name = tempfile.mkstemp()
     config = {
         "SQLALCHEMY_DATABASE_URI": "sqlite:///" + db_file_name,
@@ -47,8 +48,7 @@ def client():
     db.create_all()
     _populate_db()
 
-    app.test_client_class = AuthHeaderClient
-    yield app.test_client()
+    yield app
 
     db.session.rollback()
     db.drop_all()
@@ -58,6 +58,11 @@ def client():
     os.unlink(db_file_name)
 
     ctx.pop()
+
+@pytest.fixture
+def client(app):
+    app.test_client_class = AuthHeaderClient
+    yield app.test_client()
 
 def _populate_db():
     for i in range(1, RESOURCE_AMOUNT + 1):
@@ -480,3 +485,41 @@ class TestUserItem:
     def test_forbidden(self, client):
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
         assert resp.status_code == 403
+
+class TestClickCommands:
+
+    def test_reset_db(self, app):
+        runner = app.test_cli_runner()
+
+        assert User.query.count() > 0
+        result = runner.invoke(args=["reset-db"])
+        assert User.query.count() == 0
+
+        assert result.exit_code == 0
+        assert "Resetting database..." in result.output
+        assert "Database reset complete." in result.output
+
+    def test_create_admin_user_valid(self, app):
+        runner = app.test_cli_runner()
+
+        result = runner.invoke(
+            args=["create-admin-user"]
+        )
+
+        assert result.exit_code == 0
+        assert "Admin user 'admin' created successfully" in result.output
+        assert "Api-key:" in result.output
+
+    def test_create_admin_user_duplicate(self, app):
+        runner = app.test_cli_runner()
+
+        user = User(name="duplicate")
+        db.session.add(user)
+        db.session.commit()
+
+        result = runner.invoke(
+            args=["create-admin-user", "--name", "duplicate"]
+        )
+
+        assert result.exit_code == 0
+        assert "Error: User 'duplicate' already exists" in result.output
