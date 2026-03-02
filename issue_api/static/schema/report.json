@@ -1,14 +1,10 @@
 {
     "type": "object",
-    "required": ["user_id", "description", "location"],
+    "required": ["description", "location"],
     "properties": {
         "report_type_id": {
             "type": "number",
             "description": "Numerical ID of the report type"
-        },
-        "user_id": {
-            "type": "number",
-            "description": "Numerical user ID of the report author"
         },
         "description": {
             "type": "string",

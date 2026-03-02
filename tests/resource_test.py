@@ -171,9 +171,9 @@ class TestReportTypeCollection:
         assert resp.status_code == 409
 
     # Only allow POST with admin key
-    def test_unauthorized(self, client):
-        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
+    def test_forbidden(self, client):
+        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        assert resp.status_code == 403
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 class TestReportTypeItem:
@@ -210,11 +210,11 @@ class TestReportTypeItem:
         assert resp.status_code == 204
 
     # Only allow PUT or DELETE with admin key 
-    def test_unauthorized(self, client):
-        resp = client.put(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
+    def test_forbidden(self, client):
+        resp = client.put(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        assert resp.status_code == 403
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        assert resp.status_code == 403
 
 class TestReportCollection:
 
@@ -277,12 +277,12 @@ class TestReportItem:
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 204
 
-    # PUT and DELETE with invalid API key
-    def test_unauthorized(self, client):
-        resp = client.put(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
+    # Only allow PUT and DELETE with admin key or correct user key
+    def test_forbidden(self, client):
+        resp = client.put(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
         
 class TestCommentCollection:
 
@@ -313,15 +313,15 @@ class TestCommentItem:
 
     RESOURCE_URL = "/api/comments/1/"
     
-    # DELETE an existing comment
+    # DELETE existing comment
     def test_delete(self, client):
         resp = client.delete(self.RESOURCE_URL)
         assert resp.status_code == 204
 
-    # Only allow DELETE with admin key or correct user API key
-    def test_unauthorized(self, client):
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
+    # Only allow DELETE with admin key or correct user key
+    def test_forbidden(self, client):
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
 
 class TestReportUpvote:
     
@@ -344,6 +344,13 @@ class TestReportUpvote:
         assert resp.status_code == 401
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
+    
+    # POST and then DELETE as other user
+    def test_forbidden(self, client):
+        resp = client.post(self.RESOURCE_URL)
+        assert resp.status_code == 201
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        assert resp.status_code == 403
 
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
@@ -352,7 +359,7 @@ class TestUserCollection:
     RESOURCE_URL = "/api/users/"
 
     # GET all users with admin
-    def test_admin_get(self, client):
+    def test_get(self, client):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
@@ -361,39 +368,39 @@ class TestUserCollection:
             assert "name" in item
             assert "id" in item
     
-    # GET all users with not admin user. Expect not allowed
+    # GET all users with not admin user
     def test_non_admin_get(self, client):
-        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
         assert resp.status_code == 401
 
-    # POST a valid user
-    def test_post_valid_request(self, client):
+    # POST valid user
+    def test_post(self, client):
         valid = _get_user_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
         new_user_id = str(RESOURCE_AMOUNT + 2)
         assert resp.headers["Location"].endswith(self.RESOURCE_URL + new_user_id + "/")
     
-    # POST a wrong mediatype (text/plain). Expect not allowed
+    # POST wrong mediatype (text/plain)
     def test_post_wrong_mediatype(self, client):
         resp = client.post(self.RESOURCE_URL)
         assert resp.status_code == 415
 
-    # POST a report type with a missing mandatory field. Expect not allowed
+    # POST report type with missing mandatory field
     def test_post_missing_field(self, client):
         valid = _get_user_json()
         valid.pop("name")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
 
-    # POST a user with already existing name (name must be unique). Expect not allowed 
+    # POST user with already existing name (name must be unique)
     def test_post_name_conflict(self, client):
         valid = _get_user_json()
         valid["name"] = "test-user-1"
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
 
-    # POST a user with already existing api-key (api key must be unique). Expect not allowed 
+    # POST user with already existing api-key (api key must be unique)
     def test_post_api_key_conflict(self, client):
         valid = _get_user_json()
         valid["api_key"] = f"{TEST_USER_KEY}-1"
@@ -416,7 +423,7 @@ class TestUserItem:
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404
 
-    # Only allow DELETE with admin key 
-    def test_unauthorized(self, client):
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
-        assert resp.status_code == 401
+    # Only allow DELETE with admin key or correct user key
+    def test_forbidden(self, client):
+        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
