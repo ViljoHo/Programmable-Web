@@ -332,7 +332,7 @@ class TestReportUpvote:
     # POST with valid API key
     def test_post(self, client):
         resp = client.post(self.RESOURCE_URL)
-        assert resp.status_code == 201 # POST SUCCESS
+        assert resp.status_code == 201
     
     # DELETE with valid API key
     def test_delete(self, client):
