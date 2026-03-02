@@ -33,12 +33,6 @@ class Report(db.Model):
     comments = db.relationship("Comment", back_populates="report", passive_deletes=True)
 
     def deserialize(self, json_dict):
-        user_id = json_dict["user_id"]
-
-        user = User.query.filter_by(id=user_id).first()
-        if User == None:
-            raise ValueError("User not found")
-
         self.report_type_id = json_dict["report_type_id"]
         self.description = json_dict["description"]
         self.location = json_dict["location"]

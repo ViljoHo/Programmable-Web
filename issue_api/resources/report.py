@@ -27,21 +27,14 @@ class ReportCollection(Resource):
 
     @require_api_key
     def post(self, auth_user):
-        if not request.json:
-            raise UnsupportedMediaType
-
         try:
             validate(request.json, SCHEMA)
         except ValidationError as err:
             raise BadRequest(description=str(err))
 
         report = Report()
+        report.deserialize(json_dict=request.json)
         
-        try:
-            report.deserialize(json_dict=request.json)
-        except ValueError as err:
-            return Response(str(err), status=404)
-
         report.user = auth_user
         db.session.add(report)
         db.session.commit()
@@ -58,9 +51,6 @@ class ReportItem(Resource):
     
     @require_owner_or_admin("report", "user_id")
     def put(self, auth_user, report: Report):
-        if not request.json:
-            raise UnsupportedMediaType
-
         try:
             validate(request.json, SCHEMA)
         except ValidationError as err:
