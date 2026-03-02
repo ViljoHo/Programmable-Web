@@ -24,9 +24,6 @@ class UserCollection(Resource):
         return response_data
 
     def post(self):
-        if not request.json:
-            raise UnsupportedMediaType
-
         try:
             validate(request.json, SCHEMA)
         except ValidationError as err:

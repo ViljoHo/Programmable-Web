@@ -14,9 +14,6 @@ class CommentCollection(Resource):
 
     @require_api_key
     def post(self, auth_user, report: Report):
-        if not request.json:
-            raise UnsupportedMediaType
-
         try:
             validate(request.json, SCHEMA)
         except ValidationError as err:

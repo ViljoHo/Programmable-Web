@@ -22,9 +22,6 @@ class ReportTypeCollection(Resource):
 
     @require_admin
     def post(self, auth_user):
-        if not request.json:
-            raise UnsupportedMediaType
-
         try:
             validate(request.json, REPORT_TYPE_SCHEMA)
         except ValidationError as err:
@@ -51,9 +48,6 @@ class ReportTypeItem(Resource):
 
     @require_admin
     def put(self, auth_user, report_type: ReportType):
-        if not request.json:
-            raise UnsupportedMediaType
-
         try:
             validate(request.json, REPORT_TYPE_SCHEMA)
         except ValidationError as err:
