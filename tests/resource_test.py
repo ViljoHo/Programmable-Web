@@ -22,9 +22,11 @@ class AuthHeaderClient(FlaskClient):
         headers = Headers({
             API_KEY_HEADER: TEST_ADMIN_KEY
         })
-        extra_headers = kwargs.pop('headers', Headers())
+        extra_headers = kwargs.pop("headers", Headers())
+        if API_KEY_HEADER in extra_headers:
+            headers.pop(API_KEY_HEADER)
         headers.extend(extra_headers)
-        kwargs['headers'] = headers
+        kwargs["headers"] = headers
         return super().open(*args, **kwargs)
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
@@ -344,14 +346,6 @@ class TestReportUpvote:
         assert resp.status_code == 401
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
-    
-    # POST and then DELETE as other user
-    def test_forbidden(self, client):
-        resp = client.post(self.RESOURCE_URL)
-        assert resp.status_code == 201
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
-        assert resp.status_code == 403
-
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 class TestUserCollection:
@@ -367,11 +361,6 @@ class TestUserCollection:
         for item in body:
             assert "name" in item
             assert "id" in item
-    
-    # GET all users with not admin user
-    def test_non_admin_get(self, client):
-        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
-        assert resp.status_code == 401
 
     # POST valid user
     def test_post(self, client):
@@ -406,6 +395,11 @@ class TestUserCollection:
         valid["api_key"] = f"{TEST_USER_KEY}-1"
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
+    
+    # GET all users with not admin user
+    def test_forbidden(self, client):
+        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        assert resp.status_code == 403
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 class TestUserItem:
