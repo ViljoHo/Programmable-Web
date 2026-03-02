@@ -7,6 +7,7 @@ from .resources.comment import CommentCollection, CommentItem
 from .resources.user import UserCollection, UserItem
 from .resources.upvote import ReportUpvote
 
+
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_bp)
 

@@ -1,5 +1,6 @@
-from datetime import datetime, timezone
 import hashlib
+import secrets
+from datetime import datetime, timezone
 
 import click
 from flask.cli import with_appcontext
@@ -7,10 +8,12 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import IntegrityError
 
-from . import db
+from .extensions import db
+
 
 @event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
+def set_sqlite_pragma(dbapi_connection, _):
+    """Enables SQLite foreign key enforcement."""
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
@@ -33,11 +36,13 @@ class Report(db.Model):
     comments = db.relationship("Comment", back_populates="report", passive_deletes=True)
 
     def deserialize(self, json_dict):
+        """Copies values from the given dictionary to the object."""
         self.report_type_id = json_dict["report_type_id"]
         self.description = json_dict["description"]
         self.location = json_dict["location"]
 
     def serialize(self, short_form=False):
+        """Turns the object into a dictionary."""
         doc = {
             "id": self.id,
             "timestamp": str(self.timestamp),
@@ -59,10 +64,12 @@ class ReportType(db.Model):
     reports = db.relationship("Report", back_populates="report_type", passive_deletes=True)
 
     def deserialize(self, json_dict):
+        """Copies values from the given dictionary to the object."""
         self.name = json_dict["name"]
         self.description = json_dict.get("description")
 
     def serialize(self, short_form=False):
+        """Turns the object into a dictionary."""
         doc = {
             "name": self.name,
             "description": self.description,
@@ -74,7 +81,8 @@ class ReportType(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"), nullable=False)
+    report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"),
+                          nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
     text = db.Column(db.String(128), nullable=False)
 
@@ -82,9 +90,11 @@ class Comment(db.Model):
     report = db.relationship("Report", back_populates="comments", passive_deletes=True)
 
     def deserialize(self, json_dict):
+        """Copies values from the given dictionary to the object."""
         self.text = json_dict["text"]
 
     def serialize(self):
+        """Turns the object into a dictionary."""
         return {
             "id": self.id,
             "timestamp": str(self.timestamp),
@@ -102,14 +112,16 @@ class User(db.Model):
     api_key = db.relationship("ApiKey", back_populates="user", cascade="all, delete-orphan")
 
     def deserialize(self, json_dict):
+        """Copies values from the given dictionary to the object."""
         self.name = json_dict["name"]
 
     def serialize(self):
+        """Turns the object into a dictionary."""
         return {
             "id": self.id,
             "name": self.name,
         }
-    
+
 class ApiKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='CASCADE'), nullable=False)
@@ -120,9 +132,11 @@ class ApiKey(db.Model):
 
     @staticmethod
     def key_hash(key):
+        """Returns the hash for a given key."""
         return hashlib.sha256(key.encode()).digest()
 
     def serialize(self):
+        """Turns the object into a dictionary."""
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -133,6 +147,7 @@ class ApiKey(db.Model):
 @click.command("reset-db")
 @with_appcontext
 def reset_db():
+    """Drops and recreates all database tables."""
     print("Resetting database...")
     db.drop_all()
     db.create_all()
@@ -142,8 +157,7 @@ def reset_db():
 @click.option("--name", default="admin", help="Admin user name")
 @with_appcontext
 def create_admin_user(name):
-    import secrets
-    
+    """Creates an admin user into the database and prints the API key."""
     try:
         user = User(name=name)
         token = secrets.token_urlsafe()

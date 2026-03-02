@@ -4,7 +4,6 @@ from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
-
 from issue_api import db
 from issue_api.models import User, ApiKey
 from issue_api.utils import load_json_schema, require_admin, require_owner_or_admin

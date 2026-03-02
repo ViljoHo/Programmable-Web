@@ -1,14 +1,15 @@
 from flask import Response, request, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
-from sqlalchemy.exc import IntegrityError
-from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
+from werkzeug.exceptions import BadRequest
 
 from issue_api import db
 from issue_api.models import Comment, Report
 from issue_api.utils import load_json_schema, require_api_key, require_owner_or_admin
 
+
 SCHEMA = load_json_schema("comment.json")
+
 
 class CommentCollection(Resource):
 

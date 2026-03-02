@@ -8,7 +8,9 @@ from issue_api import db
 from issue_api.models import ReportType
 from issue_api.utils import load_json_schema, require_admin
 
+
 REPORT_TYPE_SCHEMA = load_json_schema("report_type.json")
+
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/sensorhub/resources/sensor.py
 class ReportTypeCollection(Resource):

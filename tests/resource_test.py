@@ -1,14 +1,15 @@
-import json
 import os
+import json
 import tempfile
 
-from flask.testing import FlaskClient
 import pytest
+from flask.testing import FlaskClient
 from werkzeug.datastructures import Headers
 
 from issue_api import create_app, db
-from issue_api.constants import API_KEY_HEADER
+from issue_api.utils import API_KEY_HEADER
 from issue_api.models import ReportType, User, Report, ApiKey, Comment
+
 
 RESOURCE_AMOUNT = 3
 TEST_ADMIN_KEY = "testingkey"
