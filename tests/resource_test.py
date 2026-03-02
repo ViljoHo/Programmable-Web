@@ -493,6 +493,7 @@ class TestUserItem:
 
 class TestClickCommands:
 
+    # Reset the database with reset-db command
     def test_reset_db(self, app):
         runner = app.test_cli_runner()
 
@@ -504,6 +505,7 @@ class TestClickCommands:
         assert "Resetting database..." in result.output
         assert "Database reset complete." in result.output
 
+    # Create admin user with default name
     def test_create_admin_user_valid(self, app):
         runner = app.test_cli_runner()
 
@@ -515,6 +517,7 @@ class TestClickCommands:
         assert "Admin user 'admin' created successfully" in result.output
         assert "Api-key:" in result.output
 
+    # Create duplicate user with create-admin-user
     def test_create_admin_user_duplicate(self, app):
         runner = app.test_cli_runner()
 
