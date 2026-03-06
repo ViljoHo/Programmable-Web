@@ -6,7 +6,7 @@
 * **TEACHER: Mika Oja**
 
 ### Action points
-- Make a related work section more consistens
+- Make a related work section more consistent
 - Think more like machine to machine. API consumers = other services, not humans.
 
 ### Notes
@@ -27,15 +27,23 @@
 
 
 ## Meeting 3.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
+* **DATE: 6.3.2026**
+* **PARTICIPANTS: Viljo, Kasperi, Heikki**
+* **TEACHER: Ivan**
 
 ### Action points
-*List here the actions points discussed with assistants*
+- Add more info to table in the API implementation. Resource /api/reports/?user_id=<user_id> (explain filtering)
+- Change upvote resources url and logic. The current implementation is not stateless.
+- Add more documentation to code. For example to resources/* files. (docstrings?)
+- Add more guidance to README file. (how to check test coverage and linter, what is the entrypoint)
+
 
 ### Notes
-*Add here notes that you consider important. This is not mandatory*
+- Examples for new upvote endpoints:
+    -  /user/{user_id}/upvotes
+    -  /reports/report_id/users_upvotes/{user_id}
+
+
 
 
 ## Meeting 4.
