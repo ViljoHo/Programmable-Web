@@ -1,5 +1,6 @@
 import os
 
+from flasgger import Swagger
 from flask import Flask
 
 from .extensions import db
@@ -28,6 +29,13 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
+
+    app.config["SWAGGER"] = {
+        "title": "Issue API",
+        "openapi": "3.0.3",
+        "uiversion": 3,
+    }
+    Swagger(app, template_file=os.path.join(os.path.dirname(__file__), "doc", "base.yml"))
 
     from . import api
     from . import models

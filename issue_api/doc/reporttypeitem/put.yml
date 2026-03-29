@@ -1,0 +1,24 @@
+---
+parameters:
+  - $ref: '#/components/parameters/report_type'
+description: Update an existing report type (admin only)
+security:
+  - issueApiKey: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ReportType'
+      example:
+        name: New pothole category
+        description: New pothole description
+responses:
+  '204':
+    description: Report type updated successfully
+  '400':
+    description: Invalid request body or validation error
+  '404':
+    description: Report type not found
+  '409':
+    description: A report type with this name already exists

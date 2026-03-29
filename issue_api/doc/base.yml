@@ -1,0 +1,38 @@
+---
+openapi: 3.0.3
+servers:
+- url: /
+components:
+  parameters:
+    report_type:
+      description: Selected report type's unique name
+      in: path
+      name: report_type
+      required: true
+      schema:
+        type: string
+  schemas:
+    ReportType:
+      properties:
+        name:
+          description: Report type's unique name
+          type: string
+        description:
+          description: Description of the report type
+          type: string
+      required:
+      - name
+      type: object
+  securitySchemes:
+    issueApiKey:
+      type: apiKey
+      name: Issue-Api-Key
+      in: header
+info:
+  title: Issue API
+  version: 0.0.1
+  description: |
+    This is an API for issue reporting and discussion.
+    Users submit reports with a categorized type and location.
+    Other users can view reports, add comments to discuss them,
+    and upvote reports they find important.

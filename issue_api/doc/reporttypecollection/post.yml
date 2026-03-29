@@ -1,0 +1,25 @@
+---
+description: Create a new report type (admin only)
+security:
+  - issueApiKey: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ReportType'
+      example:
+        name: Broken streetlight
+        description: Streetlight not functioning properly
+responses:
+  '201':
+    description: Report type created successfully
+    headers:
+      Location:
+        description: URL of the newly created report type
+        schema:
+          type: string
+  '400':
+    description: Invalid request body or validation error
+  '409':
+    description: Report type with this name already exists

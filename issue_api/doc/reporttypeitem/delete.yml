@@ -1,0 +1,11 @@
+---
+parameters:
+  - $ref: '#/components/parameters/report_type'
+description: Delete a report type (admin only)
+security:
+  - issueApiKey: []
+responses:
+  '204':
+    description: Report type deleted successfully
+  '404':
+    description: Report type not found

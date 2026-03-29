@@ -1,0 +1,12 @@
+---
+description: Get all available report types
+responses:
+  '200':
+    description: List of all report types in the system
+    content:
+      application/json:
+        example:
+        - name: pothole
+          description: Street surface damage reported
+        - name: graffiti
+          description: Unauthorized markings or drawings on property

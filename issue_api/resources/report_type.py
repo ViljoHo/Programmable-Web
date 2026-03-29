@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Response, request, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
@@ -6,7 +7,7 @@ from werkzeug.exceptions import BadRequest, UnsupportedMediaType, Conflict
 
 from issue_api import db
 from issue_api.models import ReportType
-from issue_api.utils import load_json_schema, require_admin
+from issue_api.utils import load_json_schema, require_admin, get_doc_path
 
 
 REPORT_TYPE_SCHEMA = load_json_schema("report_type.json")
@@ -15,6 +16,7 @@ REPORT_TYPE_SCHEMA = load_json_schema("report_type.json")
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/sensorhub/resources/sensor.py
 class ReportTypeCollection(Resource):
 
+    @swag_from(get_doc_path("reporttypecollection/get.yml"))
     def get(self):
         response_data = []
         report_types = ReportType.query.all()
@@ -22,6 +24,7 @@ class ReportTypeCollection(Resource):
             response_data.append(report_type.serialize())
         return response_data
 
+    @swag_from(get_doc_path("reporttypecollection/post.yml"))
     @require_admin
     def post(self, auth_user):
         try:
@@ -48,6 +51,7 @@ class ReportTypeCollection(Resource):
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/sensorhub/resources/sensor.py
 class ReportTypeItem(Resource):
 
+    @swag_from(get_doc_path("reporttypeitem/put.yml"))
     @require_admin
     def put(self, auth_user, report_type: ReportType):
         try:
@@ -68,6 +72,7 @@ class ReportTypeItem(Resource):
 
         return Response(status=204)
 
+    @swag_from(get_doc_path("reporttypeitem/delete.yml"))
     @require_admin
     def delete(self, auth_user, report_type: ReportType):
         db.session.delete(report_type)
