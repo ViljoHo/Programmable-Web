@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "issue_api"
 version = "0.0.1"
 dependencies = [
+    "flasgger==0.9.7.1",
     "flask==3.1.2",
     "flask-restful==0.3.10",
     "flask-sqlalchemy==3.1.1",

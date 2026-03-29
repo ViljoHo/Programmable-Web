@@ -19,6 +19,10 @@ def load_json_schema(file_name: str):
     with open(schema_path, encoding="utf-8") as file:
         return json.load(file)
 
+def get_doc_path(path_in_doc_dir: str):
+    doc_dir = os.path.join(os.path.dirname(__file__), "doc")
+    return os.path.join(doc_dir, path_in_doc_dir)
+
 def _authenticate():
     """Returns the API key object for the key in request headers."""
     key = request.headers.get(API_KEY_HEADER, "").strip()
