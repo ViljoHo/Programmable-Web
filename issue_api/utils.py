@@ -34,10 +34,12 @@ def _authenticate():
         raise Unauthorized("Invalid API key")
     return db_api_key
 
-def get_authenticated_user():
-    """Returns the user object for the API key in request headers."""
+def validate_user(user: User):
+    """Attempts to authenticate user with the API key in request headers
+    and checks if the corresponds to the user specified in URL."""
     api_key = _authenticate()
-    return api_key.user
+    if api_key.user != user:
+        raise Forbidden("API key and user ID do not match")
 
 def require_admin(func):
     """Wrapper function for requiring admin privileges for HTTP requests."""

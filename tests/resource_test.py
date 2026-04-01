@@ -101,13 +101,14 @@ def _populate_db():
         user.reports_upvoted.append(report)
 
     admin_user = User(
-        name=f"test-admin-user-{i}",
+        name="test-admin-user",
     )
     db_key = ApiKey(
         key=ApiKey.key_hash(TEST_ADMIN_KEY),
         admin=True,
         user=admin_user
     )
+    db.session.add(admin_user)
     db.session.add(db_key)
 
     db.session.commit()
@@ -387,33 +388,41 @@ class TestCommentItem:
 
 class TestReportUpvote:
     
-    RESOURCE_URL = "/api/reports/1/upvote/"
+    RESOURCE_URL_USER = f"/api/reports/1/upvote/1/"
+    RESOURCE_URL_ADMIN = f"/api/reports/1/upvote/4/"
         
     # POST with valid API key
     def test_post(self, client):
-        resp = client.post(self.RESOURCE_URL)
+        resp = client.post(self.RESOURCE_URL_ADMIN)
         assert resp.status_code == 201
     
     # DELETE with valid API key
     def test_delete(self, client):
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        resp = client.delete(self.RESOURCE_URL_USER, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
         assert resp.status_code == 204
     
     # POST upvote when already upvoted
     def test_conflict(self, client):
-        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        resp = client.post(self.RESOURCE_URL_USER, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
         assert resp.status_code == 409
     
     # DELETE nonexistent upvote
     def test_delete_not_found(self, client):
-        resp = client.delete(self.RESOURCE_URL)
+        resp = client.delete(self.RESOURCE_URL_ADMIN)
         assert resp.status_code == 404
+    
+    # POST and DELETE with API key of different user
+    def test_forbidden(self, client):
+        resp = client.post(self.RESOURCE_URL_USER, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
+        resp = client.delete(self.RESOURCE_URL_USER, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
     
     # POST and DELETE with invalid API key
     def test_unauthorized(self, client):
-        resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        resp = client.post(self.RESOURCE_URL_USER, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
-        resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: "wrongkey"})
+        resp = client.delete(self.RESOURCE_URL_USER, headers={API_KEY_HEADER: "wrongkey"})
         assert resp.status_code == 401
 
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
@@ -436,8 +445,8 @@ class TestUserCollection:
         valid = _get_user_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
-        new_user_id = str(RESOURCE_AMOUNT + 2)
-        assert resp.headers["Location"].endswith(self.RESOURCE_URL + new_user_id + "/")
+        new_user_id = RESOURCE_AMOUNT + 2
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + f"{new_user_id}/")
     
     # POST wrong mediatype (text/plain)
     def test_post_wrong_mediatype(self, client):
