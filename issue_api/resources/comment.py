@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import Response, request, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
@@ -5,7 +6,7 @@ from werkzeug.exceptions import BadRequest
 
 from issue_api import db
 from issue_api.models import Comment, Report
-from issue_api.utils import load_json_schema, require_api_key, require_owner_or_admin
+from issue_api.utils import load_json_schema, require_api_key, require_owner_or_admin, get_doc_path
 
 
 SCHEMA = load_json_schema("comment.json")
@@ -13,6 +14,7 @@ SCHEMA = load_json_schema("comment.json")
 
 class CommentCollection(Resource):
 
+    @swag_from(get_doc_path("commentcollection/post.yml"))
     @require_api_key
     def post(self, auth_user, report: Report):
         try:
@@ -34,6 +36,7 @@ class CommentCollection(Resource):
 
 class CommentItem(Resource):
 
+    @swag_from(get_doc_path("commentitem/delete.yml"))
     @require_owner_or_admin("comment", "user_id")
     def delete(self, auth_user, comment: Comment):
         db.session.delete(comment)

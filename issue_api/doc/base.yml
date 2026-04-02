@@ -11,6 +11,27 @@ components:
       required: true
       schema:
         type: string
+    report:
+      description: Selected report's unique ID
+      in: path
+      name: report
+      required: true
+      schema:
+        type: integer
+    comment:
+      description: Selected comment's unique ID
+      in: path
+      name: comment
+      required: true
+      schema:
+        type: integer
+    user:
+      description: Selected user's unique ID
+      in: path
+      name: user
+      required: true
+      schema:
+        type: integer
   schemas:
     ReportType:
       properties:
@@ -22,6 +43,42 @@ components:
           type: string
       required:
       - name
+      type: object
+    Report:
+      properties:
+        report_type_id:
+          description: Numerical ID of the report type
+          type: integer
+        description:
+          description: Short description of the reported issue
+          type: string
+        location:
+          description: Geographical location of the reported issue
+          type: string
+      required:
+      - description
+      - location
+      - report_type_id
+      type: object
+    Comment:
+      properties:
+        text:
+          description: Content of comment
+          type: string
+      required:
+      - text
+      type: object
+    User:
+      properties:
+        name:
+          description: Name of the user
+          type: string
+        api_key:
+          description: Api key for the user
+          type: string
+      required:
+      - name
+      - api_key
       type: object
   securitySchemes:
     issueApiKey:

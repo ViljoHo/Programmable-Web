@@ -7,5 +7,9 @@ security:
 responses:
   '204':
     description: Report type deleted successfully
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
   '404':
     description: Report type not found
