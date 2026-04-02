@@ -1,0 +1,18 @@
+---
+description: Get all users (admin only)
+security:
+  - issueApiKey: []
+responses:
+  '200':
+    description: List of all users in the system
+    content:
+      application/json:
+        example:
+        - id: 1
+          name: john_doe
+        - id: 2
+          name: jane_smith
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
