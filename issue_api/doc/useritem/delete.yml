@@ -1,4 +1,6 @@
 ---
+tags:
+  - Users
 parameters:
   - $ref: '#/components/parameters/user'
 description: Delete a specific user (owner or admin only)

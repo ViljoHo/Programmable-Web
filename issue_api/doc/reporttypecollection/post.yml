@@ -1,4 +1,6 @@
 ---
+tags:
+  - Report Types
 description: Create a new report type (admin only)
 security:
   - issueApiKey: []

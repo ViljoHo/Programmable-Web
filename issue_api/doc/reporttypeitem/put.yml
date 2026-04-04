@@ -1,4 +1,6 @@
 ---
+tags:
+  - Report Types
 parameters:
   - $ref: '#/components/parameters/report_type'
 description: Update an existing report type (admin only)

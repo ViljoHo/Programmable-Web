@@ -1,4 +1,6 @@
 ---
+tags:
+  - Report Types
 description: Get all available report types
 responses:
   '200':

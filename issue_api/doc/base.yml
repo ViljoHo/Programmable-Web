@@ -93,3 +93,14 @@ info:
     Users submit reports with a categorized type and location.
     Other users can view reports, add comments to discuss them,
     and upvote reports they find important.
+tags:
+  - name: Report Types
+    description: Manage report type categories
+  - name: Reports
+    description: Submit and manage issue reports
+  - name: Comments
+    description: Add and manage comments on reports
+  - name: Upvotes
+    description: Upvote and remove upvotes from reports
+  - name: Users
+    description: User registration and management

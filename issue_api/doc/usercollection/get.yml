@@ -1,4 +1,6 @@
 ---
+tags:
+  - Users
 description: Get all users (admin only)
 security:
   - issueApiKey: []
