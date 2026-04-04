@@ -1,4 +1,6 @@
 ---
+tags:
+  - Users
 description: Register a new user
 requestBody:
   required: true

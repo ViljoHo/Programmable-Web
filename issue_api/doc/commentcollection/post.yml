@@ -1,4 +1,6 @@
 ---
+tags:
+  - Comments
 parameters:
   - $ref: '#/components/parameters/report'
 description: Add a new comment to a report

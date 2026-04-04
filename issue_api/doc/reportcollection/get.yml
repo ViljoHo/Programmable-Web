@@ -1,4 +1,6 @@
 ---
+tags:
+  - Reports
 description: Get all reports, optionally filtered by user ID
 parameters:
   - in: query

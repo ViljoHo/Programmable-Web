@@ -1,4 +1,6 @@
 ---
+tags:
+  - Reports
 parameters:
   - $ref: '#/components/parameters/report'
 description: Delete a specific report (owner or admin only)

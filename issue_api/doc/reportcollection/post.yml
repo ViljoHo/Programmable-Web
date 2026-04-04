@@ -1,4 +1,6 @@
 ---
+tags:
+  - Reports
 description: Create a new report
 security:
   - issueApiKey: []

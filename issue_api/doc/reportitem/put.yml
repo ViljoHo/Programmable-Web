@@ -1,4 +1,6 @@
 ---
+tags:
+  - Reports
 parameters:
   - $ref: '#/components/parameters/report'
 description: Update an existing report (owner or admin only)

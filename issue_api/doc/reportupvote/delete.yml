@@ -1,4 +1,6 @@
 ---
+tags:
+  - Upvotes
 parameters:
   - $ref: '#/components/parameters/report'
   - $ref: '#/components/parameters/user'
