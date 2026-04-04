@@ -42,3 +42,5 @@ pip install -e .[test]
 # Run tests
 pytest
 ```
+
+### Testing skip
