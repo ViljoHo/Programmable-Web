@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize]
 
 env:
-  CONDITION: ${{ contains(github.event.head_commit.message, '#skip') }} 
+  CONDITION: ${{ contains(github.event.head_commit.message, '#skip') }}
 
 jobs:
   simple_deployment_pipeline:
@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: pip install .[test]
       - name: Check style
-        run: pylint issue_api
+        run: pylint issue_api --fail-under=9.0
       - name: Run tests
         run: pytest
       - name: Deploy to server
