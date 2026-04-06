@@ -46,4 +46,75 @@ pip install -e .[test]
 pytest
 ```
 
-### Testing skip
+## Deployment
+
+### Environment
+For environment some linux based server is needed. We are using Hetzeners VPS and for OS Ubuntu server 24.04
+
+Prerequisites:
+- Docker/Docker compose
+- venv
+- own domain
+
+### How to the setup environment
+```
+# Clone the source code
+cd /opt
+git clone https://github.com/ViljoHo/Programmable-Web.git
+
+# Create venv
+cd /opt/Programmable-Web
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install .
+
+# Initialize database
+flask --app=issue_api init-db
+
+# Create admin user. The api key is shown only one time so save it carefully
+flask --app=issue_api create-admin-user
+
+```
+
+### Certificates
+This project uses a pre-built *[Certbot](https://hub.docker.com/r/certbot/certbot)* Docker image for certificate management.
+
+#### First-Time Deployment
+Since Nginx cannot start if it points to non-existent SSL certificates, it has to be created manually
+
+1. **Start Nginx in setup mode:**
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.setup.yml up -d nginx
+   ```
+
+2. **Request the certificate:**
+   Replace the email and domain with correct ones.
+   ```bash
+   docker run --rm \
+     -v "$(pwd)/certbot/conf:/etc/letsencrypt" \
+     -v "$(pwd)/certbot/www:/var/www/certbot" \
+     certbot/certbot certonly --webroot --webroot-path=/var/www/certbot \
+     -d domain.fi --email example@email.com --agree-tos --no-eff-email
+   ```
+
+3. **Switch to Production mode:**
+   Stop the setup container and start whole stack.
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+### Running and stopping the application
+```
+# Start the app on the projects root folder
+docker compose up -d
+
+# Stop the app
+docker compose down
+```
+
+## API Verification
+Once the application is running, you can verify it by visiting the Swagger UI (API Documentation):
+- **URL:** `https://projects.issueapi.viljoholma.fi/apidocs/`
