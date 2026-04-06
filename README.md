@@ -24,6 +24,9 @@ All dependencies are listed in `pyproject.toml`. The database is a SQLite databa
 # Install production dependencies
 pip install -e .
 
+# Initialize database (creates tables and adds default report types)
+flask --app=issue_api init-db
+
 # Reset database if needed
 flask --app=issue_api reset-db
 

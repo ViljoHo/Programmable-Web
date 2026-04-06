@@ -144,6 +144,38 @@ class ApiKey(db.Model):
             "admin": self.admin,
         }
 
+def add_default_report_types():
+    """Adds default report types to the database."""
+    default_report_types = [
+        ReportType(name="Pothole", description="Road surface damage, potholes, or cracks"),
+        ReportType(name="Graffiti", description="Unauthorized markings or drawings on property"),
+        ReportType(name="Damaged Sign", description="Damaged, missing, or obstructed traffic sign"),
+        ReportType(name="Fallen Tree", description="Tree or large branches blocking the road"),
+        ReportType(name="Debris", description="Objects or debris on the road"),
+        ReportType(name="Street Light Broken", description="Street light not working"),
+        ReportType(name="Other", description="Other issues not covered by other categories"),
+    ]
+
+    try:
+        for report_type in default_report_types:
+            db.session.add(report_type)
+
+        db.session.commit()
+        print(f"Added default report types.")
+    except IntegrityError as err:
+        db.session.rollback()
+        print(f"Failed to add default report types: {err}")
+
+@click.command("init-db")
+@with_appcontext
+def init_db():
+    """Initializes the database with tables and default report types."""
+    print("Initializing database...")
+    db.drop_all()
+    db.create_all()
+    add_default_report_types()
+    print("Database initialized.")
+
 @click.command("reset-db")
 @with_appcontext
 def reset_db():
