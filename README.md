@@ -116,5 +116,5 @@ docker compose down
 ```
 
 ## API Verification
-Once the application is running, you can verify it by visiting the Swagger UI (API Documentation):
+Once the application is running, you can verify it by visiting the Swagger UI (API Documentation) at the /apidocs/ endpoint. In our case:
 - **URL:** `https://projects.issueapi.viljoholma.fi/apidocs/`
