@@ -19,6 +19,7 @@ dependencies = [
 test = [
     "pytest==9.0.2",
     "pylint",
+    "pytest-cov"
 ]
 
 [tool.setuptools.packages.find]
