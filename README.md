@@ -44,6 +44,9 @@ pip install -e .[test]
 
 # Run tests
 pytest
+
+# Run test coverage
+pytest --cov=issue_api
 ```
 
 ## Deployment

@@ -26,6 +26,8 @@ jobs:
         run: pylint issue_api --fail-under=9.0
       - name: Run tests
         run: pytest
+      - name: Run test coverage
+        run: pytest --cov=issue_api --cov-fail-under=95
       - name: Deploy to server
         if: ${{ github.event_name == 'push' && env.CONDITION == 'false' }}
         uses: appleboy/ssh-action@v1
