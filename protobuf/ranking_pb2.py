@@ -14,27 +14,25 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rranking.proto\x12\x07ranking\"Y\n\x0bIssueReport\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x11\n\ttimestamp\x18\x02 \x01(\t\x12\x14\n\x0cupvote_count\x18\x03 \x01(\x03\x12\x15\n\rcomment_count\x18\x04 \x01(\x03\"H\n\x0eRankingRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12%\n\x07reports\x18\x02 \x03(\x0b\x32\x14.ranking.IssueReport\"D\n\x0fRankingResponse\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x0f\n\x07message\x18\x03 \x01(\t\"6\n\nScoreEntry\x12\x11\n\treport_id\x18\x01 \x01(\x05\x12\x15\n\rurgency_score\x18\x02 \x01(\x02\"9\n\x12ScoreUpdateRequest\x12#\n\x06scores\x18\x01 \x03(\x0b\x32\x13.ranking.ScoreEntry\"&\n\x13ScoreUpdateResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32Y\n\x0eRankingService\x12G\n\x12RunPeriodicRanking\x12\x17.ranking.RankingRequest\x1a\x18.ranking.RankingResponse2b\n\x0eMainApiService\x12P\n\x13UpdateUrgencyScores\x12\x1b.ranking.ScoreUpdateRequest\x1a\x1c.ranking.ScoreUpdateResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rranking.proto\x12\x07ranking\"#\n\rReportRequest\x12\x12\n\nbatch_size\x18\x01 \x01(\x05\"Y\n\x0bIssueReport\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x11\n\ttimestamp\x18\x02 \x01(\x03\x12\x14\n\x0cupvote_count\x18\x03 \x01(\x03\x12\x15\n\rcomment_count\x18\x04 \x01(\x03\"7\n\x0eReportResponse\x12%\n\x07reports\x18\x01 \x03(\x0b\x32\x14.ranking.IssueReport\"6\n\nScoreEntry\x12\x11\n\treport_id\x18\x01 \x01(\x03\x12\x15\n\rurgency_score\x18\x02 \x01(\x02\"9\n\x12ScoreUpdateRequest\x12#\n\x06scores\x18\x01 \x03(\x0b\x32\x13.ranking.ScoreEntry\"&\n\x13ScoreUpdateResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xa4\x01\n\x0eMainApiService\x12@\n\rGetReportData\x12\x16.ranking.ReportRequest\x1a\x17.ranking.ReportResponse\x12P\n\x13UpdateUrgencyScores\x12\x1b.ranking.ScoreUpdateRequest\x1a\x1c.ranking.ScoreUpdateResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ranking_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_ISSUEREPORT']._serialized_start=26
-  _globals['_ISSUEREPORT']._serialized_end=115
-  _globals['_RANKINGREQUEST']._serialized_start=117
-  _globals['_RANKINGREQUEST']._serialized_end=189
-  _globals['_RANKINGRESPONSE']._serialized_start=191
-  _globals['_RANKINGRESPONSE']._serialized_end=259
-  _globals['_SCOREENTRY']._serialized_start=261
-  _globals['_SCOREENTRY']._serialized_end=315
-  _globals['_SCOREUPDATEREQUEST']._serialized_start=317
-  _globals['_SCOREUPDATEREQUEST']._serialized_end=374
-  _globals['_SCOREUPDATERESPONSE']._serialized_start=376
-  _globals['_SCOREUPDATERESPONSE']._serialized_end=414
-  _globals['_RANKINGSERVICE']._serialized_start=416
-  _globals['_RANKINGSERVICE']._serialized_end=505
-  _globals['_MAINAPISERVICE']._serialized_start=507
-  _globals['_MAINAPISERVICE']._serialized_end=605
+  _globals['_REPORTREQUEST']._serialized_start=26
+  _globals['_REPORTREQUEST']._serialized_end=61
+  _globals['_ISSUEREPORT']._serialized_start=63
+  _globals['_ISSUEREPORT']._serialized_end=152
+  _globals['_REPORTRESPONSE']._serialized_start=154
+  _globals['_REPORTRESPONSE']._serialized_end=209
+  _globals['_SCOREENTRY']._serialized_start=211
+  _globals['_SCOREENTRY']._serialized_end=265
+  _globals['_SCOREUPDATEREQUEST']._serialized_start=267
+  _globals['_SCOREUPDATEREQUEST']._serialized_end=324
+  _globals['_SCOREUPDATERESPONSE']._serialized_start=326
+  _globals['_SCOREUPDATERESPONSE']._serialized_end=364
+  _globals['_MAINAPISERVICE']._serialized_start=367
+  _globals['_MAINAPISERVICE']._serialized_end=531
 # @@protoc_insertion_point(module_scope)
