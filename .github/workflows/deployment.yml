@@ -1,0 +1,41 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+env:
+  CONDITION: ${{ contains(github.event.head_commit.message, '#skip') }}
+
+jobs:
+  simple_deployment_pipeline:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install ./issue_api/[test]
+      - name: Check style
+        run: pylint issue_api --fail-under=9.0
+      - name: Run tests
+        run: pytest
+      - name: Run test coverage
+        run: pytest --cov=issue_api --cov-fail-under=95
+      - name: Deploy to server
+        if: ${{ github.event_name == 'push' && env.CONDITION == 'false' }}
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/Programmable-Web
+            git pull origin main
+            docker compose up --build -d

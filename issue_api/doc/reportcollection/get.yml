@@ -1,0 +1,25 @@
+---
+tags:
+  - Reports
+description: Get all reports, optionally filtered by user ID
+parameters:
+  - in: query
+    name: user_id
+    schema:
+      type: integer
+    description: ID of user to filter reports by
+responses:
+  '200':
+    description: List of all reports (or reports for specified user)
+    content:
+      application/json:
+        example:
+        - id: 1
+          timestamp: '2023-10-27 12:00:00'
+          user_name: 'john_doe'
+          report_type:
+            name: pothole
+            description: Street surface damage reported
+          description: Large pothole on Main St.
+          location: Main St.
+          upvotes: 5

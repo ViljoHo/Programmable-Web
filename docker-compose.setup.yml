@@ -1,0 +1,5 @@
+# This is just for getting the certificates
+services:
+  nginx:
+    volumes:
+      - ./nginx.setup.conf:/etc/nginx/conf.d/default.conf:ro

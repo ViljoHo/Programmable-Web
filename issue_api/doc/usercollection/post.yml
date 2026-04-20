@@ -1,0 +1,25 @@
+---
+tags:
+  - Users
+description: Register a new user
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/User'
+      example:
+        name: new_user
+        api_key: SecretApiKey
+responses:
+  '201':
+    description: User created successfully
+    headers:
+      Location:
+        description: URL of the newly created user
+        schema:
+          type: string
+  '400':
+    description: Invalid request body or validation error
+  '409':
+    description: User with this name or API key already exists

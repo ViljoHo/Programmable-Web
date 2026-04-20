@@ -1,17 +1,17 @@
 ---
 tags:
-  - Report Types
+  - Comments
 parameters:
-  - $ref: '#/components/parameters/report_type'
-description: Delete a report type (admin only)
+  - $ref: '#/components/parameters/comment'
+description: Delete a specific comment (owner or admin only)
 security:
   - issueApiKey: []
 responses:
   '204':
-    description: Report type deleted successfully
+    description: Comment deleted successfully
   '401':
     description: Unauthorized, API key missing or invalid
   '403':
     description: Forbidden, caller has inadequate permissions
   '404':
-    description: Report type not found
+    description: Comment not found

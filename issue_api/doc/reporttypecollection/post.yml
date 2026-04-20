@@ -1,4 +1,6 @@
 ---
+tags:
+  - Report Types
 description: Create a new report type (admin only)
 security:
   - issueApiKey: []
@@ -21,5 +23,9 @@ responses:
           type: string
   '400':
     description: Invalid request body or validation error
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
   '409':
     description: Report type with this name already exists

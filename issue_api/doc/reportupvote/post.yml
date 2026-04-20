@@ -1,0 +1,20 @@
+---
+tags:
+  - Upvotes
+parameters:
+  - $ref: '#/components/parameters/report'
+  - $ref: '#/components/parameters/user'
+description: Upvote a specific report. The user ID in path must match the authenticated user.
+security:
+  - issueApiKey: []
+responses:
+  '201':
+    description: Upvote added successfully
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, API key user does not match the URL parameter user ID
+  '404':
+    description: Report or user not found
+  '409':
+    description: User has already upvoted the report

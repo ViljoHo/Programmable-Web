@@ -1,4 +1,6 @@
 ---
+tags:
+  - Report Types
 description: Get all available report types
 responses:
   '200':
@@ -6,7 +8,9 @@ responses:
     content:
       application/json:
         example:
-        - name: pothole
+        - id: 1
+          name: pothole
           description: Street surface damage reported
-        - name: graffiti
+        - id: 2
+          name: graffiti
           description: Unauthorized markings or drawings on property

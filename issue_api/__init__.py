@@ -41,6 +41,7 @@ def create_app(test_config=None):
     from . import models
     from .utils import ReportTypeConverter, ReportConverter, CommentConverter, UserConverter
 
+    app.cli.add_command(models.init_db)
     app.cli.add_command(models.reset_db)
     app.cli.add_command(models.create_admin_user)
 
@@ -50,8 +51,5 @@ def create_app(test_config=None):
     app.url_map.converters["user"] = UserConverter
 
     app.register_blueprint(api.api_bp)
-
-    with app.app_context():
-        db.create_all()
 
     return app
