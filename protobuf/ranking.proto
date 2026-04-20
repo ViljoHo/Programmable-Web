@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package ranking;
+
+message IssueReport {
+  int64 id = 1;
+  string timestamp = 2;
+  int64 upvote_count = 3;
+  int64 comment_count = 4;
+}
+
+message RankingRequest {
+  string task_id = 1;
+  repeated IssueReport reports = 2;
+}
+
+message RankingResponse {
+  string task_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ScoreEntry {
+  int32 report_id = 1;
+  float urgency_score = 2;
+}
+
+message ScoreUpdateRequest {
+  repeated ScoreEntry scores = 1;
+}
+
+message ScoreUpdateResponse {
+  bool success = 1;
+}
+
+service RankingService {
+  rpc RunPeriodicRanking (RankingRequest) returns (RankingResponse);
+}
+
+service MainApiService {
+  rpc UpdateUrgencyScores (ScoreUpdateRequest) returns (ScoreUpdateResponse);
+}
