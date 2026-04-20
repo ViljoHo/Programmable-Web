@@ -2,6 +2,7 @@ import os
 
 from flasgger import Swagger
 from flask import Flask
+from .scheduler import init_scheduler
 
 from .extensions import db
 
@@ -51,5 +52,7 @@ def create_app(test_config=None):
     app.url_map.converters["user"] = UserConverter
 
     app.register_blueprint(api.api_bp)
+
+    init_scheduler(app)
 
     return app

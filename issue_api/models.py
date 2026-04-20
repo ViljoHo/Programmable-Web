@@ -30,6 +30,7 @@ class Report(db.Model):
     report_type_id = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
     description = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(64), nullable=False)
+    rank = db.Column(db.Integer)
 
     user = db.relationship("User", back_populates="reports", passive_deletes=True)
     report_type = db.relationship("ReportType", back_populates="reports", passive_deletes=True)
@@ -50,7 +51,8 @@ class Report(db.Model):
             "report_type": self.report_type.serialize(True),
             "description": self.description,
             "location": self.location,
-            "upvotes": len(self.upvoted_by)
+            "upvote_count": len(self.upvoted_by),
+            "comment_count": len(self.comments)
         }
         if not short_form:
             doc["comments"] = [comment.serialize() for comment in self.comments]
