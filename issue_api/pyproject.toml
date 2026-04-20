@@ -13,8 +13,6 @@ dependencies = [
     "jsonschema==4.26.0",
     "pysqlite3==0.6.0",
     "sqlalchemy==2.0.46",
-    "APScheduler==3.11.2",
-    "grpcio==1.80.0",
 ]
 
 [project.optional-dependencies]
