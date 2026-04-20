@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import ranking_pb2 as ranking__pb2
+from . import ranking_pb2 as ranking__pb2
 
 
 class MainApiServiceStub(object):
