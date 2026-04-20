@@ -4,7 +4,6 @@ from flasgger import Swagger
 from flask import Flask
 
 from .extensions import db
-from .scheduler import init_scheduler
 
 
 # Based on http://flask.pocoo.org/docs/1.0/tutorial/factory/#the-application-factory
@@ -52,8 +51,5 @@ def create_app(test_config=None):
     app.url_map.converters["user"] = UserConverter
 
     app.register_blueprint(api.api_bp)
-
-    if not app.config["TESTING"]:
-        init_scheduler(app)
 
     return app
