@@ -247,8 +247,8 @@ class TestReportCollection:
             assert "report_type" in item
             assert "description" in item
             assert "location" in item
-            assert "upvote_count" in item
-            assert item["upvote_count"] == 1
+            assert "upvotes" in item
+            assert item["upvotes"] == 1
 
     # GET list of reports for a specific user
     def test_get_filtered(self, client):
@@ -298,8 +298,8 @@ class TestReportItem:
         assert "report_type" in body
         assert "description" in body
         assert "location" in body
-        assert "upvote_count" in body
-        assert body["upvote_count"] == 1
+        assert "upvotes" in body
+        assert body["upvotes"] == 1
         assert "comments" in body
         assert len(body["comments"]) == 1
 

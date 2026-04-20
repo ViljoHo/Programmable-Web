@@ -2,7 +2,6 @@ import os
 import json
 from functools import wraps
 
-import grpc
 from flask import request
 from werkzeug.routing import BaseConverter
 from werkzeug.exceptions import NotFound, Forbidden, Unauthorized
@@ -74,10 +73,6 @@ def require_owner_or_admin(resource_name, owner_field="user_id"):
         return wrapper
     return decorator
 
-def update_report_ranks():
-    with grpc.insecure_channel('localhost:50051') as channel:
-        pass
-        
 class ReportTypeConverter(BaseConverter):
     """Converts report types from ID to object and vice versa."""
 
