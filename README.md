@@ -71,7 +71,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
-pip install .
+pip install ./issue_api/
 
 # Initialize database
 flask --app=issue_api init-db
