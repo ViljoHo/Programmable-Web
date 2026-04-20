@@ -43,17 +43,11 @@ class Report(db.Model):
 
     def serialize(self, short_form=False):
         """Turns the object into a dictionary."""
-        report_type = None
-        if self.report_type:
-            report_type = self.report_type.serialize(True)
-        user_name = "Deleted User"
-        if self.user:
-            user_name = self.user.name
         doc = {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "user_name": user_name,
-            "report_type": report_type,
+            "user_name": self.user.name,
+            "report_type": self.report_type.serialize(True),
             "description": self.description,
             "location": self.location,
             "upvotes": len(self.upvoted_by)
