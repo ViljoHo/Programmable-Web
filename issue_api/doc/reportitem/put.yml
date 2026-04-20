@@ -1,0 +1,29 @@
+---
+tags:
+  - Reports
+parameters:
+  - $ref: '#/components/parameters/report'
+description: Update an existing report (owner or admin only)
+security:
+  - issueApiKey: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Report'
+      example:
+        report_type_id: 1
+        description: Fixed description of the issue.
+        location: Elm St.
+responses:
+  '204':
+    description: Report updated successfully
+  '400':
+    description: Invalid request body or validation error
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
+  '404':
+    description: Report not found

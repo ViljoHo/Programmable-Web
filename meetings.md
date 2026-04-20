@@ -47,15 +47,18 @@
 
 
 ## Meeting 4.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
+* **DATE: 8.4.2026**
+* **PARTICIPANTS: Viljo, Kimmo, Kasperi, Heikki**
+* **TEACHER: Ivan**
 
 ### Action points
 *List here the actions points discussed with assistants*
 
+
 ### Notes
 *Add here notes that you consider important. This is not mandatory*
+
+
 
 
 ## Midterm meeting

@@ -1,0 +1,17 @@
+---
+tags:
+  - Users
+parameters:
+  - $ref: '#/components/parameters/user'
+description: Delete a specific user (owner or admin only)
+security:
+  - issueApiKey: []
+responses:
+  '204':
+    description: User deleted successfully
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
+  '404':
+    description: User not found

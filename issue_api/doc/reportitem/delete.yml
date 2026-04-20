@@ -1,0 +1,17 @@
+---
+tags:
+  - Reports
+parameters:
+  - $ref: '#/components/parameters/report'
+description: Delete a specific report (owner or admin only)
+security:
+  - issueApiKey: []
+responses:
+  '204':
+    description: Report deleted successfully
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
+  '404':
+    description: Report not found

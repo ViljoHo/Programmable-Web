@@ -1,14 +1,16 @@
+from flasgger import swag_from
 from flask import Response
 from flask_restful import Resource
 from werkzeug.exceptions import NotFound, Conflict
 
 from issue_api import db
 from issue_api.models import Report, User
-from issue_api.utils import validate_user
+from issue_api.utils import validate_user, get_doc_path
 
 
 class ReportUpvote(Resource):
     
+    @swag_from(get_doc_path("reportupvote/post.yml"))
     def post(self, report: Report, user: User):
         validate_user(user)
 
@@ -20,6 +22,7 @@ class ReportUpvote(Resource):
 
         return Response(status=201)
 
+    @swag_from(get_doc_path("reportupvote/delete.yml"))
     def delete(self, report: Report, user: User):
         validate_user(user)
 

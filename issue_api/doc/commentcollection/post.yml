@@ -1,0 +1,30 @@
+---
+tags:
+  - Comments
+parameters:
+  - $ref: '#/components/parameters/report'
+description: Add a new comment to a report
+security:
+  - issueApiKey: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Comment'
+      example:
+        text: 'This issue also affects my daily commute.'
+responses:
+  '201':
+    description: Comment created successfully
+    headers:
+      Location:
+        description: URL of the newly created comment
+        schema:
+          type: string
+  '400':
+    description: Invalid request body or validation error
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '404':
+    description: Report not found

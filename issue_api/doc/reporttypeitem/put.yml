@@ -1,4 +1,6 @@
 ---
+tags:
+  - Report Types
 parameters:
   - $ref: '#/components/parameters/report_type'
 description: Update an existing report type (admin only)
@@ -18,6 +20,10 @@ responses:
     description: Report type updated successfully
   '400':
     description: Invalid request body or validation error
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
   '404':
     description: Report type not found
   '409':

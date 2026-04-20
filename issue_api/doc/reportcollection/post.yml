@@ -1,0 +1,28 @@
+---
+tags:
+  - Reports
+description: Create a new report
+security:
+  - issueApiKey: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Report'
+      example:
+        report_type_id: 1
+        description: Broken streetlight on Elm St.
+        location: Elm St.
+responses:
+  '201':
+    description: Report created successfully
+    headers:
+      Location:
+        description: URL of the newly created report
+        schema:
+          type: string
+  '400':
+    description: Invalid request body or validation error
+  '401':
+    description: Unauthorized, API key missing or invalid
