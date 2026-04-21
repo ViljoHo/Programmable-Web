@@ -34,8 +34,8 @@ class RankingServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.RunPeriodicRanking = channel.unary_unary(
-                '/ranking.RankingService/RunPeriodicRanking',
+        self.CalculateRanking = channel.unary_unary(
+                '/ranking.RankingService/CalculateRanking',
                 request_serializer=ranking__pb2.RankingRequest.SerializeToString,
                 response_deserializer=ranking__pb2.RankingResponse.FromString,
                 _registered_method=True)
@@ -44,7 +44,7 @@ class RankingServiceStub(object):
 class RankingServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def RunPeriodicRanking(self, request, context):
+    def CalculateRanking(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -53,8 +53,8 @@ class RankingServiceServicer(object):
 
 def add_RankingServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'RunPeriodicRanking': grpc.unary_unary_rpc_method_handler(
-                    servicer.RunPeriodicRanking,
+            'CalculateRanking': grpc.unary_unary_rpc_method_handler(
+                    servicer.CalculateRanking,
                     request_deserializer=ranking__pb2.RankingRequest.FromString,
                     response_serializer=ranking__pb2.RankingResponse.SerializeToString,
             ),
@@ -70,7 +70,7 @@ class RankingService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def RunPeriodicRanking(request,
+    def CalculateRanking(request,
             target,
             options=(),
             channel_credentials=None,
@@ -83,7 +83,7 @@ class RankingService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/ranking.RankingService/RunPeriodicRanking',
+            '/ranking.RankingService/CalculateRanking',
             ranking__pb2.RankingRequest.SerializeToString,
             ranking__pb2.RankingResponse.FromString,
             options,
