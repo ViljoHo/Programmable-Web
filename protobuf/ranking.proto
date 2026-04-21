@@ -2,35 +2,42 @@ syntax = "proto3";
 
 package ranking;
 
-message ReportRequest {
-  int32 batch_size = 1;
-}
-
-message IssueReport {
+message Report {
   int64 id = 1;
-  int64 timestamp = 2;
+  string timestamp = 2;
   int64 upvote_count = 3;
   int64 comment_count = 4;
 }
 
-message ReportResponse {
-  repeated IssueReport reports = 1;
+message RankingRequest {
+  string task_id = 1;
+  repeated Report reports = 2;
 }
 
-message ScoreEntry {
+message RankingResponse {
+  string task_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message Ranking {
   int64 report_id = 1;
   float urgency_score = 2;
 }
 
-message ScoreUpdateRequest {
-  repeated ScoreEntry scores = 1;
+message RankUpdateRequest {
+  string task_id = 1;
+  repeated Ranking rankings = 2;
 }
 
-message ScoreUpdateResponse {
+message RankUpdateResponse {
   bool success = 1;
 }
 
+service RankingService {
+  rpc RunPeriodicRanking (RankingRequest) returns (RankingResponse);
+}
+
 service MainApiService {
-  rpc GetReportData (ReportRequest) returns (ReportResponse);
-  rpc UpdateUrgencyScores (ScoreUpdateRequest) returns (ScoreUpdateResponse);
+  rpc UpdateUrgencyScores (RankUpdateRequest) returns (RankUpdateResponse);
 }
