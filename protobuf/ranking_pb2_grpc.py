@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import ranking_pb2 as ranking__pb2
+from . import ranking_pb2 as ranking__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__
@@ -86,78 +86,6 @@ class RankingService(object):
             '/ranking.RankingService/RunPeriodicRanking',
             ranking__pb2.RankingRequest.SerializeToString,
             ranking__pb2.RankingResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-
-class MainApiServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.UpdateUrgencyScores = channel.unary_unary(
-                '/ranking.MainApiService/UpdateUrgencyScores',
-                request_serializer=ranking__pb2.RankUpdateRequest.SerializeToString,
-                response_deserializer=ranking__pb2.RankUpdateResponse.FromString,
-                _registered_method=True)
-
-
-class MainApiServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def UpdateUrgencyScores(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_MainApiServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'UpdateUrgencyScores': grpc.unary_unary_rpc_method_handler(
-                    servicer.UpdateUrgencyScores,
-                    request_deserializer=ranking__pb2.RankUpdateRequest.FromString,
-                    response_serializer=ranking__pb2.RankUpdateResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'ranking.MainApiService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('ranking.MainApiService', rpc_method_handlers)
-
-
- # This class is part of an EXPERIMENTAL API.
-class MainApiService(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def UpdateUrgencyScores(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/ranking.MainApiService/UpdateUrgencyScores',
-            ranking__pb2.RankUpdateRequest.SerializeToString,
-            ranking__pb2.RankUpdateResponse.FromString,
             options,
             channel_credentials,
             insecure,
