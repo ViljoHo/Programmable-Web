@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rranking.proto\x12\x07ranking\"T\n\x06Report\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x11\n\ttimestamp\x18\x02 \x01(\t\x12\x14\n\x0cupvote_count\x18\x03 \x01(\x03\x12\x15\n\rcomment_count\x18\x04 \x01(\x03\"C\n\x0eRankingRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12 \n\x07reports\x18\x02 \x03(\x0b\x32\x0f.ranking.Report\"+\n\x07Ranking\x12\x11\n\treport_id\x18\x01 \x01(\x03\x12\r\n\x05score\x18\x02 \x01(\x02\"h\n\x0fRankingResponse\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x0f\n\x07message\x18\x03 \x01(\t\x12\"\n\x08rankings\x18\x04 \x03(\x0b\x32\x10.ranking.Ranking2Y\n\x0eRankingService\x12G\n\x12RunPeriodicRanking\x12\x17.ranking.RankingRequest\x1a\x18.ranking.RankingResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rranking.proto\x12\x07ranking\"T\n\x06Report\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x11\n\ttimestamp\x18\x02 \x01(\t\x12\x14\n\x0cupvote_count\x18\x03 \x01(\x03\x12\x15\n\rcomment_count\x18\x04 \x01(\x03\"2\n\x0eRankingRequest\x12 \n\x07reports\x18\x01 \x03(\x0b\x32\x0f.ranking.Report\"+\n\x07Ranking\x12\x11\n\treport_id\x18\x01 \x01(\x03\x12\r\n\x05score\x18\x02 \x01(\x02\"W\n\x0fRankingResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\"\n\x08rankings\x18\x03 \x03(\x0b\x32\x10.ranking.Ranking2W\n\x0eRankingService\x12\x45\n\x10\x43\x61lculateRanking\x12\x17.ranking.RankingRequest\x1a\x18.ranking.RankingResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,11 +34,11 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_REPORT']._serialized_start=26
   _globals['_REPORT']._serialized_end=110
   _globals['_RANKINGREQUEST']._serialized_start=112
-  _globals['_RANKINGREQUEST']._serialized_end=179
-  _globals['_RANKING']._serialized_start=181
-  _globals['_RANKING']._serialized_end=224
-  _globals['_RANKINGRESPONSE']._serialized_start=226
-  _globals['_RANKINGRESPONSE']._serialized_end=330
-  _globals['_RANKINGSERVICE']._serialized_start=332
-  _globals['_RANKINGSERVICE']._serialized_end=421
+  _globals['_RANKINGREQUEST']._serialized_end=162
+  _globals['_RANKING']._serialized_start=164
+  _globals['_RANKING']._serialized_end=207
+  _globals['_RANKINGRESPONSE']._serialized_start=209
+  _globals['_RANKINGRESPONSE']._serialized_end=296
+  _globals['_RANKINGSERVICE']._serialized_start=298
+  _globals['_RANKINGSERVICE']._serialized_end=385
 # @@protoc_insertion_point(module_scope)

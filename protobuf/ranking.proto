@@ -10,8 +10,7 @@ message Report {
 }
 
 message RankingRequest {
-  string task_id = 1;
-  repeated Report reports = 2;
+  repeated Report reports = 1;
 }
 
 message Ranking {
@@ -20,12 +19,11 @@ message Ranking {
 }
 
 message RankingResponse {
-  string task_id = 1;
-  bool success = 2;
-  string message = 3;
-  repeated Ranking rankings = 4;
+  bool success = 1;
+  string message = 2;
+  repeated Ranking rankings = 3;
 }
 
 service RankingService {
-  rpc RunPeriodicRanking (RankingRequest) returns (RankingResponse);
+  rpc CalculateRanking (RankingRequest) returns (RankingResponse);
 }
