@@ -1,0 +1,28 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import grpc
+import protobuf.ranking_pb2 as pb2
+import protobuf.ranking_pb2_grpc as pb2_grpc
+
+from issue_api.models import Report
+
+def update_rankings():
+    channel = grpc.insecure_channel('localhost:50051')
+    stub = pb2_grpc.RankingServiceStub(channel)
+
+    reports = Report.query.all()
+    reports_serialized = []
+    for report in reports:
+        serialized = report.serialize()
+        serialized_cut = {
+            "id": serialized["id"],
+            "timestamp": serialized["timestamp"],
+            "upvote_count": serialized["upvote_count"],
+            "comment_count": serialized["comment_count"],
+        }
+        reports_serialized.append(serialized_cut)
+
+    response = stub.CalculateRanking((pb2.RankingRequest(reports=reports_serialized)))
+    print(response)
