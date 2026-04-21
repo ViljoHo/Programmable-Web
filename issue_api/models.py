@@ -30,6 +30,7 @@ class Report(db.Model):
     report_type_id = db.Column(db.Integer, db.ForeignKey("report_type.id", ondelete="SET NULL"))
     description = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(64), nullable=False)
+    urgency_score = db.Column(db.Float)
 
     user = db.relationship("User", back_populates="reports", passive_deletes=True)
     report_type = db.relationship("ReportType", back_populates="reports", passive_deletes=True)

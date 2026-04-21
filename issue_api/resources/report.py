@@ -3,11 +3,12 @@ from flask import Response, request, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType
+from grpc import RpcError
 
 from issue_api import db
 from issue_api.models import Report
 from issue_api.utils import load_json_schema, require_api_key, require_owner_or_admin, get_doc_path
-
+from ..rpc_client import update_rankings
 
 SCHEMA = load_json_schema("report.json")
 
@@ -41,6 +42,12 @@ class ReportCollection(Resource):
         report.user = auth_user
         db.session.add(report)
         db.session.commit()
+        
+        try:
+            update_rankings()
+        except RpcError:
+            # RPC server unavailable
+            pass
 
         return Response(status=201, headers={
             "location": url_for("api.reportitem", report=report)

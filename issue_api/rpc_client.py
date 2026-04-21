@@ -7,6 +7,7 @@ import protobuf.ranking_pb2 as pb2
 import protobuf.ranking_pb2_grpc as pb2_grpc
 
 from issue_api.models import Report
+from issue_api import db
 
 def update_rankings():
     channel = grpc.insecure_channel('localhost:50051')
@@ -25,4 +26,10 @@ def update_rankings():
         reports_serialized.append(serialized_cut)
 
     response = stub.CalculateRanking((pb2.RankingRequest(reports=reports_serialized)))
-    print(response)
+    
+    for entry in response.rankings:
+        report = Report.query.get(entry.report_id)
+        if report:
+            report.urgency_score = entry.score
+
+    db.session.commit()
