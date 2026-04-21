@@ -43,14 +43,22 @@ class Report(db.Model):
 
     def serialize(self, short_form=False):
         """Turns the object into a dictionary."""
+        report_type = None
+        if self.report_type:
+            report_type = self.report_type.serialize(True)
+        
+        user_name = "Deleted user"
+        if self.user:
+            user_name = self.user.name
         doc = {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "user_name": self.user.name,
-            "report_type": self.report_type.serialize(True),
+            "user_name": user_name,
+            "report_type": report_type,
             "description": self.description,
             "location": self.location,
-            "upvotes": len(self.upvoted_by)
+            "upvote_count": len(self.upvoted_by),
+            "comment_count": len(self.comments),
         }
         if not short_form:
             doc["comments"] = [comment.serialize() for comment in self.comments]
@@ -95,10 +103,14 @@ class Comment(db.Model):
 
     def serialize(self):
         """Turns the object into a dictionary."""
+        user = "Deleted user"
+        if self.user:
+            user = self.user.serialize()
+
         return {
             "id": self.id,
             "timestamp": str(self.timestamp),
-            "user": self.user.serialize(),
+            "user": user,
             "text": self.text,
         }
 
