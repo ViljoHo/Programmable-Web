@@ -22,7 +22,7 @@ All dependencies are listed in `pyproject.toml`. The database is a SQLite databa
 ### Production
 ```
 # Install production dependencies
-pip install -e .
+pip install -e ./issue_api/
 
 # Initialize database (creates tables and adds default report types)
 flask --app=issue_api init-db
@@ -40,7 +40,7 @@ flask --app=issue_api --debug run
 ### Tests
 ```
 # Install additional test dependencies
-pip install -e .[test]
+pip install -e ./issue_api/[test]
 
 # Run tests
 pytest
