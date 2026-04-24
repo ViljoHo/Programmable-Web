@@ -39,7 +39,7 @@ def create_app(test_config=None):
 
     from . import api
     from . import models
-    from .utils import ReportTypeConverter, ReportConverter, CommentConverter, UserConverter
+    from .utils import ReportTypeConverter, ReportConverter, CommentConverter, UserConverter, UserByNameConverter
 
     app.cli.add_command(models.init_db)
     app.cli.add_command(models.reset_db)
@@ -49,6 +49,7 @@ def create_app(test_config=None):
     app.url_map.converters["report"] = ReportConverter
     app.url_map.converters["comment"] = CommentConverter
     app.url_map.converters["user"] = UserConverter
+    app.url_map.converters["user_by_name"] = UserByNameConverter
 
     app.register_blueprint(api.api_bp)
 

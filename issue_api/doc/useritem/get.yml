@@ -1,0 +1,22 @@
+---
+tags:
+  - Users
+parameters:
+  - $ref: '#/components/parameters/user'
+description: Get a specific user by username (owner or admin only)
+security:
+  - issueApiKey: []
+responses:
+  '200':
+    description: User details
+    content:
+      application/json:
+        example:
+          id: 1
+          name: john_doe
+  '401':
+    description: Unauthorized, API key missing or invalid
+  '403':
+    description: Forbidden, caller has inadequate permissions
+  '404':
+    description: User not found

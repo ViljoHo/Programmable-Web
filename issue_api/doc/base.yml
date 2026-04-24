@@ -26,12 +26,12 @@ components:
       schema:
         type: integer
     user:
-      description: Selected user's unique ID
+      description: Selected user's unique username
       in: path
       name: user
       required: true
       schema:
-        type: integer
+        type: string
   schemas:
     ReportType:
       properties:

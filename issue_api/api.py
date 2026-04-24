@@ -19,4 +19,5 @@ api.add_resource(ReportUpvote, "/reports/<report:report>/upvote/<user:user>/")
 api.add_resource(CommentCollection, "/reports/<report:report>/comments/")
 api.add_resource(CommentItem, "/comments/<comment:comment>/")
 api.add_resource(UserCollection, "/users/")
-api.add_resource(UserItem, "/users/<user:user>/")
+api.add_resource(UserItem, "/users/<user_by_name:user>/")
+

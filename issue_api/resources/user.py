@@ -57,6 +57,11 @@ class UserCollection(Resource):
 
 class UserItem(Resource):
 
+    @swag_from(get_doc_path("useritem/get.yml"))
+    @require_owner_or_admin("user", "id")
+    def get(self, auth_user, user: User):
+        return user.serialize()
+
     @swag_from(get_doc_path("useritem/delete.yml"))
     @require_owner_or_admin("user", "id")
     def delete(self, auth_user, user: User):

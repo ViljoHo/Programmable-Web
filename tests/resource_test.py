@@ -447,8 +447,7 @@ class TestUserCollection:
         valid = _get_user_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
-        new_user_id = RESOURCE_AMOUNT + 2
-        assert resp.headers["Location"].endswith(self.RESOURCE_URL + f"{new_user_id}/")
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + f"{valid['name']}/")
     
     # POST wrong mediatype (text/plain)
     def test_post_wrong_mediatype(self, client):
@@ -484,8 +483,38 @@ class TestUserCollection:
 # Adapted from course material: https://github.com/UniOulu-Ubicomp-Programming-Courses/pwp-sensorhub-example/blob/ex2-project-layout/tests/test_resource.py
 class TestUserItem:
 
-    RESOURCE_URL = "api/users/1/"
-    INVALID_URL = "/api/users/99999/"
+    RESOURCE_URL = "/api/users/test-user-1/"
+    INVALID_URL = "/api/users/nonexistent-user/"
+
+    # GET user by name with the owner's API key
+    def test_get_owner(self, client):
+        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "test-user-1"
+        assert "id" in body
+
+    # GET user by name with admin key
+    def test_get_admin(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "test-user-1"
+
+    # GET user by name with a different user's key (forbidden)
+    def test_get_forbidden(self, client):
+        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
+        assert resp.status_code == 403
+
+    # GET nonexistent user by name
+    def test_get_not_found(self, client):
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+    # GET user by name with no API key
+    def test_get_unauthorized(self, client):
+        resp = client.get(self.RESOURCE_URL, headers={API_KEY_HEADER: ""})
+        assert resp.status_code == 401
     
     # DELETE existing user
     def test_delete(self, client):
@@ -498,7 +527,7 @@ class TestUserItem:
         assert resp.status_code == 404
 
     # Only allow DELETE with admin key or correct user key
-    def test_forbidden(self, client):
+    def test_delete_forbidden(self, client):
         resp = client.delete(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-2"})
         assert resp.status_code == 403
 
