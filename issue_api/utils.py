@@ -120,3 +120,15 @@ class UserConverter(BaseConverter):
 
     def to_url(self, value):
         return str(value.id)
+
+class UserByNameConverter(BaseConverter):
+    """Converts users from username to object and vice versa."""
+
+    def to_python(self, value):
+        db_user = User.query.filter_by(name=value).first()
+        if db_user is None:
+            raise NotFound(description=f"User with name '{value}' not found")
+        return db_user
+
+    def to_url(self, value):
+        return str(value.name)
