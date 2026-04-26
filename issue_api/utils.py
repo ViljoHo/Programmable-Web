@@ -1,3 +1,4 @@
+"""Utility functions for the issue API."""
 import os
 import json
 from functools import wraps
@@ -20,6 +21,7 @@ def load_json_schema(file_name: str):
         return json.load(file)
 
 def get_doc_path(path_in_doc_dir: str):
+    """Returns the path to a document file in the doc directory."""
     doc_dir = os.path.join(os.path.dirname(__file__), "doc")
     return os.path.join(doc_dir, path_in_doc_dir)
 

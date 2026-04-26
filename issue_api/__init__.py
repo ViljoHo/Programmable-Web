@@ -1,3 +1,5 @@
+"""Package initialization for the issue API."""
+
 import os
 
 from flasgger import Swagger
@@ -37,9 +39,15 @@ def create_app(test_config=None):
     }
     Swagger(app, template_file=os.path.join(os.path.dirname(__file__), "doc", "base.yml"))
 
-    from . import api
-    from . import models
-    from .utils import ReportTypeConverter, ReportConverter, CommentConverter, UserConverter, UserByNameConverter
+    from . import api  # pylint: disable=import-outside-toplevel
+    from . import models  # pylint: disable=import-outside-toplevel
+    from .utils import ( # pylint: disable=import-outside-toplevel
+        ReportTypeConverter,
+        ReportConverter,
+        CommentConverter,
+        UserConverter,
+        UserByNameConverter
+    )
 
     app.cli.add_command(models.init_db)
     app.cli.add_command(models.reset_db)

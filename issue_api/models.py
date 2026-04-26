@@ -1,3 +1,5 @@
+"""Data models for the issue API."""
+
 import hashlib
 import secrets
 from datetime import datetime, timezone
@@ -24,6 +26,8 @@ upvotes = db.Table("upvotes",
 )
 
 class Report(db.Model):
+    """Report model."""
+
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
@@ -47,7 +51,7 @@ class Report(db.Model):
         report_type = None
         if self.report_type:
             report_type = self.report_type.serialize(True)
-        
+
         user_name = "Deleted user"
         if self.user:
             user_name = self.user.name
@@ -67,6 +71,8 @@ class Report(db.Model):
         return doc
 
 class ReportType(db.Model):
+    """Report type model."""
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False, unique=True)
     description = db.Column(db.String(128))
@@ -89,6 +95,8 @@ class ReportType(db.Model):
         return doc
 
 class Comment(db.Model):
+    """Comment model."""
+
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     report_id = db.Column(db.Integer, db.ForeignKey("report.id", ondelete="CASCADE"),
@@ -117,6 +125,8 @@ class Comment(db.Model):
         }
 
 class User(db.Model):
+    """User model."""
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
 
@@ -137,6 +147,8 @@ class User(db.Model):
         }
 
 class ApiKey(db.Model):
+    """API key model."""
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='CASCADE'), nullable=False)
     key = db.Column(db.String(32), unique=True, nullable=False)
@@ -175,7 +187,7 @@ def add_default_report_types():
             db.session.add(report_type)
 
         db.session.commit()
-        print(f"Added default report types.")
+        print("Added default report types.")
     except IntegrityError as err:
         db.session.rollback()
         print(f"Failed to add default report types: {err}")
