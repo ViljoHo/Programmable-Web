@@ -1,0 +1,16 @@
+---
+tags:
+  - Upvotes
+parameters:
+  - $ref: '#/components/parameters/report'
+  - $ref: '#/components/parameters/user'
+description: Check if a user has upvoted a specific post
+responses:
+  '200':
+    description: Boolean value indicating the upvote status
+    content:
+      application/json:
+        example:
+          upvoted: true
+  '404':
+    description: Report or user not found

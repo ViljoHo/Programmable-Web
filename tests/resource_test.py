@@ -393,6 +393,13 @@ class TestReportUpvote:
     RESOURCE_URL_USER = f"/api/reports/1/upvote/1/"
     RESOURCE_URL_ADMIN = f"/api/reports/1/upvote/4/"
         
+    # GET with valid API key
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL_ADMIN)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert "upvoted" in body
+        
     # POST with valid API key
     def test_post(self, client):
         resp = client.post(self.RESOURCE_URL_ADMIN)
