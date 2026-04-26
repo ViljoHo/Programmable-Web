@@ -151,7 +151,7 @@ class ApiKey(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='CASCADE'), nullable=False)
-    key = db.Column(db.String(32), unique=True, nullable=False)
+    key = db.Column(db.String(128), unique=True, nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", back_populates="api_key")
