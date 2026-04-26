@@ -55,6 +55,9 @@ components:
         location:
           description: Geographical location of the reported issue
           type: string
+        urgency_score:
+          description: A score of urgency for the report, where higher means more urgent
+          type: float
       required:
       - description
       - location
@@ -101,6 +104,6 @@ tags:
   - name: Comments
     description: Add and manage comments on reports
   - name: Upvotes
-    description: Upvote and remove upvotes from reports
+    description: Upvote and remove upvote_count from reports
   - name: Users
     description: User registration and management
