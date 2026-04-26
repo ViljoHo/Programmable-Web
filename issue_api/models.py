@@ -58,6 +58,7 @@ class Report(db.Model):
             "report_type": report_type,
             "description": self.description,
             "location": self.location,
+            "urgency_score": self.urgency_score,
             "upvote_count": len(self.upvoted_by),
             "comment_count": len(self.comments),
         }
