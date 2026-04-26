@@ -47,6 +47,10 @@ pytest
 
 # Run test coverage
 pytest --cov=issue_api
+
+# Run linter
+pylint issue_api
+pylint report_ranker
 ```
 
 ## Deployment
