@@ -7,7 +7,7 @@ import os
 import sys
 import time
 from concurrent import futures
-from datetime import datetime
+from datetime import datetime, timezone
 
 import grpc
 
@@ -28,13 +28,13 @@ class RankingService(pb2_grpc.RankingServiceServicer):
         """Ranks an issue report based on its estimated urgency."""
         current_time = int(time.time())
         try:
-            report_time = int(datetime.fromisoformat(timestamp).timestamp())
+            report_time = int(datetime.fromisoformat(timestamp).replace(tzinfo=timezone.utc).timestamp())
         except ValueError:
             report_time = current_time
 
         age_in_seconds = max(1, current_time - report_time)
 
-        score = (age_in_seconds / 86400 + comments) * (1 + upvotes * 0.2)
+        score = (age_in_seconds / 86400 + comments / 4) * (1.2 ** upvotes)
         return float(score)
 
     def CalculateRanking(self, request, context):
