@@ -516,13 +516,6 @@ class TestUserCollection:
         invalid["name"] = "A" * 33
         resp = client.post(self.RESOURCE_URL, json=invalid)
         assert resp.status_code == 400
-
-    # POST user with too long api_key (max 128 chars)
-    def test_post_too_long_api_key(self, client):
-        invalid = _get_user_json()
-        invalid["api_key"] = "A" * 129
-        resp = client.post(self.RESOURCE_URL, json=invalid)
-        assert resp.status_code == 400
     
     # GET all users with not admin user
     def test_forbidden(self, client):

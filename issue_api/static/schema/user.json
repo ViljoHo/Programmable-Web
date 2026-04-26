@@ -12,7 +12,6 @@
         },
         "api_key": {
             "type": "string",
-            "maxLength": 128,
             "description": "Api key for the user"
         }
     }
