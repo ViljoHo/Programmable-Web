@@ -1,3 +1,5 @@
+"""API endpoints for the issue API."""
+
 from flask import Blueprint
 from flask_restful import Api
 
@@ -20,4 +22,3 @@ api.add_resource(CommentCollection, "/reports/<report:report>/comments/")
 api.add_resource(CommentItem, "/comments/<comment:comment>/")
 api.add_resource(UserCollection, "/users/")
 api.add_resource(UserItem, "/users/<user_by_name:user>/")
-
