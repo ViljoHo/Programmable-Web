@@ -1,3 +1,5 @@
+"""Resources for upvotes in the issue API."""
+
 from flasgger import swag_from
 from flask import Response
 from flask_restful import Resource
@@ -9,15 +11,18 @@ from issue_api.utils import validate_user, get_doc_path
 
 
 class ReportUpvote(Resource):
-    
+    """Resource for handling report upvotes."""
+
     @swag_from(get_doc_path("reportupvote/get.yml"))
     def get(self, report: Report, user: User):
+        """Get whether a user has upvoted a report."""
         validate_user(user)
-        
+
         return { "upvoted": report in user.reports_upvoted }
-    
+
     @swag_from(get_doc_path("reportupvote/post.yml"))
     def post(self, report: Report, user: User):
+        """Upvote a report."""
         validate_user(user)
 
         if report in user.reports_upvoted:
@@ -30,6 +35,7 @@ class ReportUpvote(Resource):
 
     @swag_from(get_doc_path("reportupvote/delete.yml"))
     def delete(self, report: Report, user: User):
+        """Remove an upvote from a report."""
         validate_user(user)
 
         if report not in user.reports_upvoted:

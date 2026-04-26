@@ -1,4 +1,5 @@
-""""""
+"""RPC client for remote procedure calls to the ranking service."""
+
 import os
 import sys
 import grpc
