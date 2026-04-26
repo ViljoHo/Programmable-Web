@@ -14,8 +14,8 @@ import grpc
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # pylint: disable=wrong-import-position
-import protobuf.ranking_pb2 as pb2
-import protobuf.ranking_pb2_grpc as pb2_grpc
+import protos.ranking_pb2 as pb2
+import protos.ranking_pb2_grpc as pb2_grpc
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
