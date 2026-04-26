@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "report_ranker"
+version = "0.0.1"
+dependencies = [
+    "grpcio==1.80.0",
+    "grpcio-tools==1.80.0"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==9.0.2",
+    "pylint",
+    "pytest-cov"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["report_ranker*"]

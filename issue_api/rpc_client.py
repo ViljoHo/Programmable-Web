@@ -3,8 +3,8 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import grpc
-import protobuf.ranking_pb2 as pb2
-import protobuf.ranking_pb2_grpc as pb2_grpc
+import protos.ranking_pb2 as pb2
+import protos.ranking_pb2_grpc as pb2_grpc
 
 from issue_api.models import Report
 from issue_api import db

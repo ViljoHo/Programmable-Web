@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "report_ranker"
+name = "protos"
 version = "0.0.1"
 dependencies = [
     "protobuf==6.33.6",
@@ -20,4 +20,4 @@ test = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["report_ranker*"]
+include = ["protos*"]
