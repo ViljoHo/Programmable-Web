@@ -21,6 +21,7 @@ const ReportListItem = ({ report }) => {
             <p>Reported by: {report.user_name}</p>
             <p>Time: {report.timestamp}</p>
             <p>Upvotes: {report.upvote_count}</p>
+            <p>Urgency Score: {report.urgency_score?.toFixed(2)}</p>
         </div>
     )
 }
