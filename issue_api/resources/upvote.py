@@ -10,6 +10,12 @@ from issue_api.utils import validate_user, get_doc_path
 
 class ReportUpvote(Resource):
     
+    @swag_from(get_doc_path("reportupvote/get.yml"))
+    def get(self, report: Report, user: User):
+        validate_user(user)
+        
+        return { "upvoted": report in user.reports_upvoted }
+    
     @swag_from(get_doc_path("reportupvote/post.yml"))
     def post(self, report: Report, user: User):
         validate_user(user)
