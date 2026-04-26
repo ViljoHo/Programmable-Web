@@ -34,7 +34,7 @@ class RankingService(pb2_grpc.RankingServiceServicer):
 
         age_in_seconds = max(1, current_time - report_time)
 
-        score = (age_in_seconds / 86400 + comments / 4) * (1.2 ** upvotes)
+        score = upvotes / (age_in_seconds / 86400 + comments / 4)
         return float(score)
 
     def CalculateRanking(self, request, context):
