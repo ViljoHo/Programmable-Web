@@ -18,7 +18,8 @@ responses:
             description: Street surface damage reported
           description: Large pothole on Main St.
           location: Main St.
-          upvotes: 5
+          urgency_score: 0.5
+          upvote_count: 5
           comments:
           - id: 1
             timestamp: '2023-10-27 12:30:00'
