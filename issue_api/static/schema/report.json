@@ -8,10 +8,12 @@
         },
         "description": {
             "type": "string",
+            "maxLength": 128,
             "description": "Short description of the reported issue"
         },
         "location": {
             "type": "string",
+            "maxLength": 64,
             "description": "Geographical location of the reported issue"
         }
     }

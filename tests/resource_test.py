@@ -179,6 +179,13 @@ class TestReportTypeCollection:
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
 
+    # POST a report type with too long description (max 128 chars)
+    def test_post_too_long_description(self, client):
+        valid = _get_report_type_json()
+        valid["description"] = "A" * 129
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
     # Only allow POST with admin key
     def test_forbidden(self, client):
         resp = client.post(self.RESOURCE_URL, headers={API_KEY_HEADER: f"{TEST_USER_KEY}-1"})
@@ -277,6 +284,20 @@ class TestReportCollection:
     def test_post_missing_field(self, client):
         resp = client.post(self.RESOURCE_URL, json={"":""})
         assert resp.status_code == 400
+
+    # POST report with too long description (max 128 chars)
+    def test_post_too_long_description(self, client):
+        invalid = _get_report_json()
+        invalid["description"] = "A" * 129
+        resp = client.post(self.RESOURCE_URL, json=invalid)
+        assert resp.status_code == 400
+
+    # POST report with too long location (max 64 chars)
+    def test_post_too_long_location(self, client):
+        invalid = _get_report_json()
+        invalid["location"] = "A" * 65
+        resp = client.post(self.RESOURCE_URL, json=invalid)
+        assert resp.status_code == 400
     
     # POST with invalid API key
     def test_unauthorized(self, client):
@@ -356,6 +377,13 @@ class TestCommentCollection:
     # POST comment with invalid JSON
     def test_post_missing_field(self, client):
         resp = client.post(self.RESOURCE_URL, json={"":""})
+        assert resp.status_code == 400
+
+    # POST comment with too long text (max 128 chars)
+    def test_post_too_long_text(self, client):
+        invalid = _get_comment_json()
+        invalid["text"] = "A" * 129
+        resp = client.post(self.RESOURCE_URL, json=invalid)
         assert resp.status_code == 400
     
     # POST comment with invalid API key
@@ -481,6 +509,20 @@ class TestUserCollection:
         valid["api_key"] = f"{TEST_USER_KEY}-1"
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
+
+    # POST user with too long name (max 32 chars)
+    def test_post_too_long_name(self, client):
+        invalid = _get_user_json()
+        invalid["name"] = "A" * 33
+        resp = client.post(self.RESOURCE_URL, json=invalid)
+        assert resp.status_code == 400
+
+    # POST user with too long api_key (max 32 chars)
+    def test_post_too_long_api_key(self, client):
+        invalid = _get_user_json()
+        invalid["api_key"] = "A" * 33
+        resp = client.post(self.RESOURCE_URL, json=invalid)
+        assert resp.status_code == 400
     
     # GET all users with not admin user
     def test_forbidden(self, client):
