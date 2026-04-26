@@ -4,6 +4,7 @@
     "properties": {
         "text": {
             "type": "string",
+            "maxLength": 128,
             "description": "Content of comment"
         }
     }

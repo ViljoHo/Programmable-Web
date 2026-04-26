@@ -4,10 +4,12 @@
     "properties": {
         "name": {
             "type": "string",
+            "maxLength": 32,
             "description": "Report type's unique name"
         },
         "description": {
             "type": "string",
+            "maxLength": 128,
             "description": "Optional description of the report type"
         }
     }
