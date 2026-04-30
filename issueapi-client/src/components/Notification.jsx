@@ -3,34 +3,19 @@ import { useNotification } from '../stores/notificationStore'
 const Notification = () => {
     const { message, msgType } = useNotification()
 
-    const errorStyle = {
-        color: 'red',
-        backgroundColor: 'lightcoral',
-        border: '1px solid red',
-        padding: '10px',
-        borderRadius: '5px',
-        marginBottom: '10px',
-    }
-
-    const successStyle = {
-        color: 'green',
-        backgroundColor: 'lightgreen',
-        border: '1px solid green',
-        padding: '10px',
-        borderRadius: '5px',
-        marginBottom: '10px',
-    }
-
     if (!message) {
         return null
     }
 
-    return (
-        <div style={msgType === 'error' ? errorStyle : successStyle}>
-            {message}
-        </div>
-    )
+    const baseClasses =
+        'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg border text-sm font-medium animate-fade-in max-w-lg text-center'
+
+    const typeClasses =
+        msgType === 'error'
+            ? 'bg-red-50 border-red-300 text-red-700'
+            : 'bg-accent-50 border-accent-300 text-accent-700'
+
+    return <div className={`${baseClasses} ${typeClasses}`}>{message}</div>
 }
 
 export default Notification
-

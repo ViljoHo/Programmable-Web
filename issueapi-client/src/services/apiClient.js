@@ -19,3 +19,14 @@ export const getAuthHeaders = () => {
     }
     return headers
 }
+
+export const handleApiError = async (response, defaultMessage, statusMessages = {}) => {
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        const message = statusMessages[response.status]
+            || errorData?.description
+            || errorData?.message
+            || defaultMessage
+        throw new Error(message)
+    }
+}

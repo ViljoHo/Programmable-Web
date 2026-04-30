@@ -1,5 +1,3 @@
-//import { useEffect } from 'react'
-//import { useReportActions, useReportsStore } from './stores/reportsStore'
 import { Routes, Route } from 'react-router-dom'
 import OneReportView from './components/OneReportView'
 import ReportsView from './components/ReportsView'
@@ -11,20 +9,22 @@ import Notification from './components/Notification'
 
 const App = () => {
     return (
-        <div>
+        <div className="min-h-screen bg-surface font-sans text-gray-800">
             <NavBar />
             <Notification />
 
-            <Routes>
-                <Route
-                    path="/reports/:id"
-                    element={<OneReportView />}
-                />
-                <Route path="/login" element={<LoginView />} />
-                <Route path="/register" element={<RegisterView />} />
-                <Route path="/create" element={<CreateReportView />} />
-                <Route path="/" element={<ReportsView />} />
-            </Routes>
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+                <Routes>
+                    <Route
+                        path="/reports/:id"
+                        element={<OneReportView />}
+                    />
+                    <Route path="/login" element={<LoginView />} />
+                    <Route path="/register" element={<RegisterView />} />
+                    <Route path="/create" element={<CreateReportView />} />
+                    <Route path="/" element={<ReportsView />} />
+                </Routes>
+            </main>
         </div>
     )
 }

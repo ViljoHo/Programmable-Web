@@ -1,4 +1,4 @@
-import { getAuthHeaders } from './apiClient'
+import { getAuthHeaders, handleApiError } from './apiClient'
 
 const baseUrl = '/api/users'
 
@@ -9,10 +9,10 @@ export const registerUser = async (name, apiKey) => {
         body: JSON.stringify({ name, api_key: apiKey }),
     })
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => null)
-        throw new Error(errorData?.message || 'Failed to register user')
-    }
+    await handleApiError(response, 'Failed to register user', {
+        400: 'Invalid registration data. Please check your username and API key.',
+        409: 'Username or API key is already taken.',
+    })
 
     return response
 }
@@ -22,9 +22,10 @@ export const getUser = async (userName) => {
         headers: getAuthHeaders(),
     })
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch user: ${userName}`)
-    }
+    await handleApiError(response, 'Login failed', {
+        401: 'Wrong credentials. Please check your username and API key.',
+        404: 'User not found. Please check your username.',
+    })
 
     return await response.json()
 }
@@ -35,9 +36,11 @@ export const deleteUser = async (userName) => {
         headers: getAuthHeaders(),
     })
 
-    if (!response.ok) {
-        throw new Error(`Failed to delete user: ${userName}`)
-    }
+    await handleApiError(response, 'Failed to delete account', {
+        401: 'You must be logged in to delete your account.',
+        403: 'You do not have permission to delete this account.',
+        404: 'User account not found.',
+    })
 
     const location = response.headers.get('Location')
 

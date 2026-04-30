@@ -1,4 +1,4 @@
-import { getAuthHeaders } from './apiClient'
+import { getAuthHeaders, handleApiError } from './apiClient'
 
 const baseUrl = '/api'
 
@@ -10,9 +10,9 @@ export const getAllReports = async (userId) => {
         : `${baseUrl}/reports/`
     const response = await fetch(url)
 
-    if (!response.ok) {
-        throw new Error('Failed to fetch reports')
-    }
+    await handleApiError(response, 'Failed to load reports', {
+        500: 'Server error while loading reports. Please try again later.',
+    })
 
     return await response.json()
 }
@@ -20,9 +20,9 @@ export const getAllReports = async (userId) => {
 export const getReport = async (id) => {
     const response = await fetch(`${baseUrl}/reports/${id}/`)
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch report with id: ${id}`)
-    }
+    await handleApiError(response, 'Failed to load report', {
+        404: 'Report not found. It may have been deleted.',
+    })
 
     return await response.json()
 }
@@ -34,9 +34,10 @@ export const createNewReport = async ({ report_type_id, description, location })
         body: JSON.stringify({ report_type_id, description, location }),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to create report')
-    }
+    await handleApiError(response, 'Failed to create report', {
+        400: 'Invalid report data. Please check all fields are filled correctly.',
+        401: 'You must be logged in to create a report.',
+    })
 
     const locationHeader = response.headers.get('Location')
     const parts = locationHeader.split('/').filter(Boolean)
@@ -52,9 +53,12 @@ export const updateReport = async ({ report_type_id, description, location }, id
         body: JSON.stringify({ report_type_id, description, location }),
     })
 
-    if (!response.ok) {
-        throw new Error(`Failed to update report ${id}`)
-    }
+    await handleApiError(response, 'Failed to update report', {
+        400: 'Invalid report data. Please check all fields are filled correctly.',
+        401: 'You must be logged in to edit a report.',
+        403: 'You do not have permission to edit this report.',
+        404: 'Report not found. It may have been deleted.',
+    })
 
     return response
 }
@@ -65,9 +69,11 @@ export const deleteReport = async (id) => {
         headers: getAuthHeaders(),
     })
 
-    if (!response.ok) {
-        throw new Error(`Failed to delete report ${id}`)
-    }
+    await handleApiError(response, 'Failed to delete report', {
+        401: 'You must be logged in to delete a report.',
+        403: 'You do not have permission to delete this report.',
+        404: 'Report not found. It may have already been deleted.',
+    })
 
     return response
 }
@@ -81,9 +87,11 @@ export const addComment = async (reportId, text) => {
         body: JSON.stringify({ text }),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to add comment')
-    }
+    await handleApiError(response, 'Failed to add comment', {
+        400: 'Invalid comment. Please check your input.',
+        401: 'You must be logged in to add a comment.',
+        404: 'Report not found. It may have been deleted.',
+    })
 
     return response
 }
@@ -94,9 +102,11 @@ export const deleteComment = async (commentId) => {
         headers: getAuthHeaders(),
     })
 
-    if (!response.ok) {
-        throw new Error(`Failed to delete comment ${commentId}`)
-    }
+    await handleApiError(response, 'Failed to delete comment', {
+        401: 'You must be logged in to delete a comment.',
+        403: 'You do not have permission to delete this comment.',
+        404: 'Comment not found. It may have already been deleted.',
+    })
 
     return response
 }
@@ -109,11 +119,27 @@ export const upvoteReport = async (reportId, userId) => {
         headers: getAuthHeaders(),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to upvote report')
-    }
+    await handleApiError(response, 'Failed to upvote report', {
+        401: 'You must be logged in to upvote.',
+        403: 'You do not have permission to upvote this report.',
+        409: 'You have already upvoted this report.',
+    })
 
     return response
+}
+
+export const getUpvote = async (reportId, userId) => {
+    const response = await fetch(`${baseUrl}/reports/${reportId}/upvote/${userId}/`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+    })
+
+    await handleApiError(response, 'Failed to check upvote status', {
+        401: 'You must be logged in to check upvote status.',
+        403: 'You do not have permission to check this upvote status.',
+    })
+
+    return await response.json()
 }
 
 export const removeUpvote = async (reportId, userId) => {
@@ -122,9 +148,11 @@ export const removeUpvote = async (reportId, userId) => {
         headers: getAuthHeaders(),
     })
 
-    if (!response.ok) {
-        throw new Error('Failed to remove upvote')
-    }
+    await handleApiError(response, 'Failed to remove upvote', {
+        401: 'You must be logged in to remove your upvote.',
+        403: 'You do not have permission to remove this upvote.',
+        404: 'You have not upvoted this report.',
+    })
 
     return response
 }
