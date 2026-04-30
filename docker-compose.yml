@@ -6,6 +6,24 @@ services:
       - ./instance:/opt/issueapi/instance
     expose:
       - "8000"
+    depends_on:
+      - auxiliary_service
+    environment:
+      - RANKING_SERVICE_HOST=auxiliary_service
+
+  auxiliary_service:
+    build:
+      context: .
+      dockerfile: auxiliary_service/Dockerfile
+    restart: unless-stopped
+    expose:
+      - "50051"
+
+  client:
+    build: ./issueapi-client
+    restart: unless-stopped
+    expose:
+      - "80"
 
   nginx:
     image: nginx:alpine
@@ -19,6 +37,7 @@ services:
       - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - issueapi
+      - client
 
   certbot:
     image: certbot/certbot

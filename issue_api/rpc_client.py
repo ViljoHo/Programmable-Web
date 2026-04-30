@@ -15,7 +15,8 @@ from issue_api import db
 def update_rankings():
     """Remotely calls a function on an RPC server to calculate 
     urgency score and updates the scores in the database"""
-    channel = grpc.insecure_channel('localhost:50051')
+    ranking_host = os.environ.get('RANKING_SERVICE_HOST', 'localhost')
+    channel = grpc.insecure_channel(f'{ranking_host}:50051')
     stub = pb2_grpc.RankingServiceStub(channel)
 
     reports = Report.query.all()

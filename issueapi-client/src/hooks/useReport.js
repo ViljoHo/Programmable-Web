@@ -7,9 +7,10 @@ import {
     deleteComment,
     upvoteReport,
     removeUpvote,
+    getUpvote,
 } from '../services/reports'
 
-export const useReport = (id) => {
+export const useReport = (id, userId) => {
     const queryClient = useQueryClient()
 
     const result = useQuery({
@@ -20,8 +21,8 @@ export const useReport = (id) => {
 
     const handleSuccess = () => {
         queryClient.invalidateQueries({ queryKey: ['report', id] })
-        // Invalidate list to keep counts up to date
         queryClient.invalidateQueries({ queryKey: ['reports'] })
+        queryClient.invalidateQueries({ queryKey: ['upvoteStatus', id, userId] })
     }
 
     const updateReportMutation = useMutation({
@@ -56,13 +57,22 @@ export const useReport = (id) => {
         onSuccess: handleSuccess,
     })
 
+    const upvoteStatus = useQuery({
+        queryKey: ['upvoteStatus', id, userId],
+        queryFn: () => getUpvote(id, userId),
+        enabled: !!userId && !!id,
+        refetchOnWindowFocus: false,
+    })
+
     return {
         report: result.data,
         isPending: result.isPending,
-        updateReport: (reportData) => updateReportMutation.mutate({ reportData }),
-        deleteReport: () => deleteReportMutation.mutate(),
-        addComment: (text) => addCommentMutation.mutate({ text }),
-        deleteComment: (commentId) => deleteCommentMutation.mutate(commentId),
+        hasUpvoted: upvoteStatus.data?.upvoted ?? false,
+        isUpvoteLoading: upvoteStatus.isPending,
+        updateReport: (reportData, options) => updateReportMutation.mutate({ reportData }, options),
+        deleteReport: (options) => deleteReportMutation.mutate(undefined, options),
+        addComment: (text, options) => addCommentMutation.mutate({ text }, options),
+        deleteComment: (commentId, options) => deleteCommentMutation.mutate(commentId, options),
         upvote: (userId, options) => upvoteMutation.mutate({ userId }, options),
         removeUpvote: (userId, options) => removeUpvoteMutation.mutate({ userId }, options),
     }
