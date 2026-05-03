@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useReportTypes } from '../hooks/useReportTypes'
 
+/**
+ * A modal dialog component used to edit an existing report.
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} props.isOpen - Determines if the dialog should be rendered.
+ * @param {Function} props.onClose - Callback triggered when the dialog requests to close.
+ * @param {Object} props.report - The existing report data to prepopulate the form.
+ * @param {Function} props.onUpdate - Callback triggered on form submission with the updated data.
+ * @returns {JSX.Element|null} The rendered dialog, or null if not open.
+ */
 const EditReportDialog = ({ isOpen, onClose, report, onUpdate }) => {
     const { reportTypes } = useReportTypes()
     const [formData, setFormData] = useState({

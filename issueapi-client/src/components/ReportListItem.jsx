@@ -1,6 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 
 
+/**
+ * Component that renders a single report as a list item.
+ * Clicking the item navigates the user to the detailed view of the report.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.report - The report object to render.
+ * @returns {JSX.Element} The rendered report list item.
+ */
 const ReportListItem = ({ report }) => {
     const navigate = useNavigate()
 

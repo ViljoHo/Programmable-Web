@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom'
 import { useUser, useUserActions } from '../stores/userStore'
 
+/**
+ * The navigation bar component displayed at the top of the application.
+ * Provides links to home, create report, and login/logout actions.
+ *
+ * @returns {JSX.Element} The rendered navigation bar.
+ */
 const NavBar = () => {
     const user = useUser()
     const { logout } = useUserActions()

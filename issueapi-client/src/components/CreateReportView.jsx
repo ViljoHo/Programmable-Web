@@ -5,6 +5,12 @@ import { useReportTypes } from '../hooks/useReportTypes'
 import { useUser } from '../stores/userStore'
 import { useNotificationActions } from '../stores/notificationStore'
 
+/**
+ * Component that renders a form for users to create a new report.
+ * Requires the user to be logged in; otherwise displays an error message.
+ *
+ * @returns {JSX.Element} The rendered CreateReport view.
+ */
 const CreateReport = () => {
     const [reportTypeId, setReportTypeId] = useState('')
     const [description, setDescription] = useState('')

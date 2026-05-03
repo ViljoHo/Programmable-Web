@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { useUser, useUserActions } from '../stores/userStore'
 import { useNotificationActions } from '../stores/notificationStore'
 
+/**
+ * Component that provides a login form for the user.
+ * If the user is already logged in, displays their account info and a logout button.
+ *
+ * @returns {JSX.Element} The rendered Login view.
+ */
 const LoginView = () => {
     const [userName, setUserName] = useState('')
     const [apiKey, setApiKey] = useState('')

@@ -7,6 +7,11 @@ import RegisterView from './components/RegisterView'
 import NavBar from './components/NavBar'
 import Notification from './components/Notification'
 
+/**
+ * The root application component that defines the main layout and routing structure.
+ *
+ * @returns {JSX.Element} The rendered application containing NavBar, Notification, and Routes.
+ */
 const App = () => {
     return (
         <div className="min-h-screen bg-surface font-sans text-gray-800">

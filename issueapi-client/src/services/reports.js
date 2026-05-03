@@ -4,6 +4,14 @@ const baseUrl = '/api'
 
 // Reports
 
+/**
+ * Fetches all reports from the API, optionally filtered by a specific user ID.
+ *
+ * @param {string} [userId] - Optional ID of the user to filter reports by.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of report objects.
+ * @throws {Error} Throws an error if the fetch fails or server returns an error. 
+ *                 Handled by displaying a notification or error state in the UI.
+ */
 export const getAllReports = async (userId) => {
     const url = userId
         ? `${baseUrl}/reports/?user_id=${userId}`
@@ -17,6 +25,14 @@ export const getAllReports = async (userId) => {
     return await response.json()
 }
 
+/**
+ * Fetches a single report by its ID from the API.
+ *
+ * @param {string} id - The unique identifier of the report to fetch.
+ * @returns {Promise<Object>} A promise that resolves to the report object.
+ * @throws {Error} Throws an error if the report is not found (404) or fetch fails.
+ *                 Handled by redirecting or showing a "not found" message.
+ */
 export const getReport = async (id) => {
     const response = await fetch(`${baseUrl}/reports/${id}/`)
 
@@ -27,6 +43,17 @@ export const getReport = async (id) => {
     return await response.json()
 }
 
+/**
+ * Creates a new report with the provided data.
+ *
+ * @param {Object} reportData - The data for the new report.
+ * @param {string} reportData.report_type_id - The ID of the report type.
+ * @param {string} reportData.description - The description of the issue.
+ * @param {string} reportData.location - The location string for the issue.
+ * @returns {Promise<string>} A promise that resolves to the ID of the newly created report.
+ * @throws {Error} Throws an error on invalid data (400) or missing authentication (401).
+ *                 Handled by showing a validation error to the user.
+ */
 export const createNewReport = async ({ report_type_id, description, location }) => {
     const response = await fetch(`${baseUrl}/reports/`, {
         method: 'POST',
@@ -46,6 +73,18 @@ export const createNewReport = async ({ report_type_id, description, location })
     return id
 }
 
+/**
+ * Updates an existing report with new data.
+ *
+ * @param {Object} reportData - The updated data for the report.
+ * @param {string} reportData.report_type_id - The ID of the report type.
+ * @param {string} reportData.description - The description of the issue.
+ * @param {string} reportData.location - The location string for the issue.
+ * @param {string} id - The ID of the report to update.
+ * @returns {Promise<Response>} A promise resolving to the fetch Response object upon success.
+ * @throws {Error} Throws an error if validation fails (400), unauthenticated (401), unauthorized (403), or not found (404).
+ *                 Handled by notifying the user of the failure reason.
+ */
 export const updateReport = async ({ report_type_id, description, location }, id) => {
     const response = await fetch(`${baseUrl}/reports/${id}/`, {
         method: 'PUT',
@@ -63,6 +102,14 @@ export const updateReport = async ({ report_type_id, description, location }, id
     return response
 }
 
+/**
+ * Deletes an existing report.
+ *
+ * @param {string} id - The ID of the report to delete.
+ * @returns {Promise<Response>} A promise resolving to the fetch Response object upon success.
+ * @throws {Error} Throws an error if unauthenticated (401), unauthorized (403), or not found (404).
+ *                 Handled by informing the user they cannot delete it.
+ */
 export const deleteReport = async (id) => {
     const response = await fetch(`${baseUrl}/reports/${id}/`, {
         method: 'DELETE',
@@ -80,6 +127,15 @@ export const deleteReport = async (id) => {
 
 // Comments
 
+/**
+ * Adds a new comment to a specific report.
+ *
+ * @param {string} reportId - The ID of the report to comment on.
+ * @param {string} text - The content of the comment.
+ * @returns {Promise<Response>} A promise resolving to the fetch Response object upon success.
+ * @throws {Error} Throws an error on invalid input (400), unauthenticated (401), or missing report (404).
+ *                 Handled by showing a validation or error notification.
+ */
 export const addComment = async (reportId, text) => {
     const response = await fetch(`${baseUrl}/reports/${reportId}/comments/`, {
         method: 'POST',
@@ -96,6 +152,14 @@ export const addComment = async (reportId, text) => {
     return response
 }
 
+/**
+ * Deletes a comment by its ID.
+ *
+ * @param {string} commentId - The ID of the comment to delete.
+ * @returns {Promise<Response>} A promise resolving to the fetch Response object upon success.
+ * @throws {Error} Throws an error if unauthenticated (401), unauthorized (403), or not found (404).
+ *                 Handled by notifying the user they cannot delete it.
+ */
 export const deleteComment = async (commentId) => {
     const response = await fetch(`${baseUrl}/comments/${commentId}/`, {
         method: 'DELETE',
@@ -113,6 +177,15 @@ export const deleteComment = async (commentId) => {
 
 // Upvotes
 
+/**
+ * Upvotes a report for a specific user.
+ *
+ * @param {string} reportId - The ID of the report to upvote.
+ * @param {string} userId - The ID of the user casting the upvote.
+ * @returns {Promise<Response>} A promise resolving to the fetch Response object upon success.
+ * @throws {Error} Throws an error if unauthenticated (401), unauthorized (403), or already upvoted (409).
+ *                 Handled by alerting the user.
+ */
 export const upvoteReport = async (reportId, userId) => {
     const response = await fetch(`${baseUrl}/reports/${reportId}/upvote/${userId}/`, {
         method: 'POST',
@@ -128,6 +201,15 @@ export const upvoteReport = async (reportId, userId) => {
     return response
 }
 
+/**
+ * Checks if a user has upvoted a specific report.
+ *
+ * @param {string} reportId - The ID of the report to check.
+ * @param {string} userId - The ID of the user.
+ * @returns {Promise<Object>} A promise resolving to the upvote status object.
+ * @throws {Error} Throws an error if unauthenticated (401) or unauthorized (403).
+ *                 Handled by failing the query silently or showing an error.
+ */
 export const getUpvote = async (reportId, userId) => {
     const response = await fetch(`${baseUrl}/reports/${reportId}/upvote/${userId}/`, {
         method: 'GET',
@@ -142,6 +224,15 @@ export const getUpvote = async (reportId, userId) => {
     return await response.json()
 }
 
+/**
+ * Removes an upvote from a report for a specific user.
+ *
+ * @param {string} reportId - The ID of the report to remove upvote from.
+ * @param {string} userId - The ID of the user removing the upvote.
+ * @returns {Promise<Response>} A promise resolving to the fetch Response object upon success.
+ * @throws {Error} Throws an error if unauthenticated (401), unauthorized (403), or upvote not found (404).
+ *                 Handled by informing the user of the failure.
+ */
 export const removeUpvote = async (reportId, userId) => {
     const response = await fetch(`${baseUrl}/reports/${reportId}/upvote/${userId}/`, {
         method: 'DELETE',

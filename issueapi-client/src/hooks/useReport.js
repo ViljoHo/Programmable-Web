@@ -10,6 +10,15 @@ import {
     getUpvote,
 } from '../services/reports'
 
+/**
+ * Custom hook to manage fetching and mutating a specific report.
+ *
+ * @param {string} id - The ID of the report to fetch and manage.
+ * @param {string} [userId] - Optional ID of the currently logged-in user to fetch their upvote status.
+ * @returns {Object} An object containing the report data, loading states, and mutation functions (update, delete, comment, upvote).
+ * @throws {Error} Propagates errors from the underlying service functions (e.g., fetch failures or API errors) to the mutation handlers.
+ *                 These should be handled in the component calling the mutation via `onError` callbacks.
+ */
 export const useReport = (id, userId) => {
     const queryClient = useQueryClient()
 

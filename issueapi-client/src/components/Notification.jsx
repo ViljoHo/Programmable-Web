@@ -1,5 +1,11 @@
 import { useNotification } from '../stores/notificationStore'
 
+/**
+ * A global notification component that displays success or error messages.
+ * Uses the `notificationStore` to determine visibility and content.
+ *
+ * @returns {JSX.Element|null} The notification element, or null if no message is set.
+ */
 const Notification = () => {
     const { message, msgType } = useNotification()
 
