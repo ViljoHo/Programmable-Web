@@ -5,6 +5,13 @@ import { useUser } from '../stores/userStore'
 import { useNotificationActions } from '../stores/notificationStore'
 import EditReportDialog from './EditReportDialog'
 
+/**
+ * Component that displays the details of a single report.
+ * Provides functionality to update, delete, upvote, and add/delete comments for the report.
+ * Uses the URL parameter `id` to determine which report to display.
+ *
+ * @returns {JSX.Element} The rendered single report view.
+ */
 const OneReportView = () => {
   const { id } = useParams()
   const user = useUser()

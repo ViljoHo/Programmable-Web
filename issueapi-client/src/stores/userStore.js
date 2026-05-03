@@ -37,6 +37,19 @@ const useUserStore = create(
     )
 )
 
+/**
+ * Hook to access the currently logged-in user's data.
+ *
+ * @returns {Object|null} The user object if logged in, otherwise null.
+ */
 export const useUser = () => useUserStore((state) => state.user)
 
+/**
+ * Hook to access user authentication action functions.
+ *
+ * @returns {Object} An object containing the `login` and `logout` methods.
+ *                   `login(userName: string, apiKeyValue: string)` attempts to fetch user data and set the global API key.
+ *                   Throws an error if login fails. Handled by showing an error message on the login form.
+ *                   `logout()` clears the API key and removes the user from state.
+ */
 export const useUserActions = () => useUserStore((state) => state.actions)

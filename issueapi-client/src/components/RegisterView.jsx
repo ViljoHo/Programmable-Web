@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { registerUser } from '../services/users'
 import { useNotificationActions } from '../stores/notificationStore'
 
+/**
+ * Component that provides a form for registering a new user account.
+ * Upon successful registration, redirects the user to the login page.
+ *
+ * @returns {JSX.Element} The rendered Register view.
+ */
 const RegisterView = () => {
     const [userName, setUserName] = useState('')
     const [apiKey, setApiKey] = useState('')

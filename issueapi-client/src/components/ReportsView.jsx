@@ -3,6 +3,12 @@ import { useReports } from '../hooks/useReports'
 import { useUser } from '../stores/userStore'
 import ReportListItem from './ReportListItem'
 
+/**
+ * Component that displays a list of reports.
+ * Allows filtering (e.g., all vs my reports) and sorting (by newest or urgency).
+ *
+ * @returns {JSX.Element} The rendered reports list view.
+ */
 const ReportsView = () => {
   const [filter, setFilter] = useState('all')
   const [sortBy, setSortBy] = useState('newest')
