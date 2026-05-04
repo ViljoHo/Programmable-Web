@@ -122,6 +122,17 @@ docker compose up -d
 docker compose down
 ```
 
+### Monitoring and control
+For monitoring runnin systems, dockers built in commands can be used
+```
+docker stats
+
+docker compose logs -f
+
+docker events
+```
+For control and auto healing there is 'restart: unless-stopped' in the docker compose file.
+
 ## API Verification
 Once the application is running, you can verify it by visiting the Swagger UI (API Documentation) at the /apidocs/ endpoint. In our case:
 - **URL:** `https://projects.issueapi.viljoholma.fi/apidocs/`
